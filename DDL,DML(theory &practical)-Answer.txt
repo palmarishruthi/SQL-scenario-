@@ -1,0 +1,195 @@
+
+PART A
+1.
+A.DDL commands(data defination language)
+  1.Create- to create the table or database.
+  2.Alter- to change the data in table.
+  3.DROP- use to drop the table but not delete the table from the database.
+  4.TRUNCATE- used to delete the rows but  the table structure remains the same.
+  5.RENAME- used to remane the table.
+
+B.DML(DATA MANIPULATION LANGUAGE)
+  1.INSERT- used to insert the values to the table.
+  2.DELETE-used to delete the table or data in the rows.
+  3.UPDATE-used to modify the existing data in the table.
+  4.WHERE- used to filter specific location of data as a condition.
+
+C.DQL(DATA QUERY LANGUAGE0
+   SELECT-is used to view the table.
+
+D.DCL(DATACONTROL LANGUAGE)
+  1.GRANT- used to give permission to access the database or table.
+  2.REVOKE- used to remove the permission to access the database or table.
+
+E.TCL(TRANSCATION CONTROL LANGUAGE)
+  1.COMMIT- is used to make the data as a permanent which cant modify again. 
+  2.ROLLBACK- is used to do UNDO if it is not commited.
+  3.SAVEPOINT- is used to set a point with data,so that you can rollback when ever you want.
+
+2.
+
+DDL commands(data defination language)
+MAINLY FOR TABLE RELATIVE COMMANDS
+
+  1.Create- to create the table or database.
+  2.Alter- to change the data in table.
+  3.DROP- use to drop the table but not delete the table from the database.
+  4.TRUNCATE- used to delete the rows but  the table structure remains the same.
+  5.RENAME- used to remane the table.
+example: 
+to create table
+
+create table assessment.employee(
+empid integer primary key,
+empname varchar(50),
+department varchar(30),
+salary integer);
+
+table is created.
+
+
+DML(DATA MANIPULATION LANGUAGE)-MAINLY FOR ROW BASED COMMANDS
+  1.INSERT- used to insert the values to the table.
+  2.DELETE-used to delete the table or data in the rows.
+  3.UPDATE-used to modify the existing data in the table.
+  4.WHERE- used to filter specific location of data as a condition.
+
+example: to insert the values in the table
+ insert into assessment.employee(empid, empname,department,salary)
+values (101,'john','IT',45000),
+(102,'mary','HR',35000),
+(103,'david','finance',55000),
+(104,'sam','IT',40000),
+(105,'priya','HR',38000);
+values are inserted
+
+3.
+DQL(DATA QUERY LANGUAGE)
+   SELECT-is used to view the table.
+select * from assessment.employee;
+
+4.
+DELETE-is a DML command
+      -used to delete the selected data in the rows.
+      -we can rollback before commited.
+      -structure remains the same
+TRUNCATE- is a DDL command.
+      - used to delete all the rows.
+      - sturcture remains same.
+      -where command we cant use here.
+DROP-   is a DDL command.
+      - is used to remove entire table or database.
+      - table structure willbe deleted
+
+5.
+COMMIT- is a TCL command. which is used to make the data changes permanently. we cant revert back
+syntax- commit;
+example: update assessment.account
+         set balance=35000 where accountno=1002;
+         commit;
+
+6.
+COMMIT- is a TCL command. which is used to make the data changes permanently. we cant revert back
+syntax- commit;
+
+example: we have the account table which we want to update the balance 35000 where account number is 1002 and the changes should be permanently
+in future no one can change that data.
+ 
+update assessment.account
+         set balance=35000 where accountno=1002;
+         commit;
+
+ROLLBACK- is a TCL command,where we can revert the changes of current transactions but should be commit for that data.
+if it is given commit command we cant revert the changes.
+syntax: ROLLBACK;
+example: a librarian by mistakely deleted the one of the book details. we should revert the changes.
+
+          delete from assessment.book
+          where bookid=3;
+
+          rollback ; 
+
+7.SAVEPOINT- is a TCL command which is used to set a point within the transaction, 
+so that we can rollback to that specific point instead of undoing the entrie transaction.
+
+syntax:SAVEPOINT savepoint_name;
+
+8.
+both are DCL(DATACONTROL LANGUAGE)
+  1.GRANT- used to give permission to access the database or table.
+syntax:GRANT privilage_name
+       ON databasename table_name
+       TO 'username'@'host';
+  2.REVOKE- used to remove the permission to access the database or table.
+syntax:
+             REVOKE privilage_name
+       ON databasename table_name
+       TO 'username'@'host';
+
+9. Asterisk(*) represents the all the rows and colomns of the table, which shows the all the data in the table
+ syntax: select * from tablename;
+example: display all the data of student table.
+         select * from  student;
+
+
+10. NO, SELECT statement cant modify the data, because select is only used to view the data in the table.
+   example:select * from  student;
+
+11.
+Selecting all the colomn: it will show all the colomn details from the table by using '*'.
+ example:select * from  student;
+
+selecting sepecific coloumn : it will show particular colomn whichever we want from the table.
+example: SELECT stuid,fees from STUDENT; iy displays oly stuid  and fees of the student.
+
+12. It throws error by mentioning unknown coloum in table.
+
+13. FROM clause is used in every SELECT command bze, select command can extract the exact data from particular mentioned table.
+
+14, syntax error,missing letter in tablename or missing commas.
+
+15.
+
+
+PART B
+
+1. select * from employee;
+
+2. select empname from employee;
+
+3. select department from employee;
+
+4. select empname, salary from employee;
+
+5. select empname, department,city from employee;
+
+6. Select * from employee
+   where department='HR';
+7.select empname,salary from employee;
+
+8. Select empname, cities from employee;
+
+9.select salary from employee;
+
+10. select empid,empname,department from employee;
+
+11.create table Student(
+   studentid integer,
+   studentname varchar(20),
+   course varchar(20));
+
+12. alter table student
+    add emailid varchar(50);
+
+
+13. insert into student(studentid, studentname, course, emailid),
+    values(108,'Raj','Testing','raj@gmail.com');
+
+14. insert into student(studentid, studentname, course, emailid),
+    values(108,'Raj','Testing','raj@gmail.com');
+   commit;
+
+15. select empid,empname,department from employee;
+
+
+
