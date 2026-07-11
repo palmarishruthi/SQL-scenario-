@@ -1,0 +1,154 @@
+
+                                Frequently Asked Interview Questions
+
+-- Q1. What is the SELECT statement?
+
+            The SELECT statement is an SQL command used to retrieve data from one or more tables in a database.
+ It allows you to choose specific columns or all columns and can also filter, sort, and group the returned data.
+
+   syntax:      SELECT column1, column2, ...
+                FROM table_name;
+      example: SELECT name, age
+                FROM Students;
+
+       To retrieve all columns:
+               SELECT * FROM Students;
+       
+-- Q2. What is the purpose of the SELECT statement?
+
+             The purpose of the SELECT statement is to retrieve data from one or more tables in a database. 
+          It is the most commonly used SQL statement and allows users to view the required information without modifying the data.
+
+   Some common uses of the SELECT statement include:
+
+        - Retrieving specific columns or all columns from a table.
+        - Filtering records using the WHERE clause.
+        -  Sorting results using the ORDER BY clause.
+        - Grouping data using the GROUP BY clause.
+        - Combining data from multiple tables using JOIN.
+
+example: SELECT name, age
+         FROM Students; 
+
+-- Q3. What is the difference between SELECT * and SELECT column_name?
+
+
+| **`SELECT *`**                                           | **`SELECT column_name`**                                  |
+| -------------------------------------------------------- | --------------------------------------------------------- |
+| Retrieves **all columns** from a table.                  | Retrieves **only the specified column(s)** from a table.  |
+| Returns more data, which may be slower for large tables. | Returns only the required data, making it more efficient. |
+| Used when you need every column in the table.            | Used when you need only specific information.             |
+
+
+ -- Q4. What does the * (asterisk) symbol represent in SQL?
+
+          The * (asterisk) symbol in SQL represents all columns of a table.
+          When used with the SELECT statement, it retrieves every column from the specified table.
+
+Syntax: SELECT * FROM table_name;
+
+Example: SELECT * FROM Students;
+
+This query displays all columns (such as StudentID, Name, Age, Class, etc.) and all rows from the Students table.
+
+-- Q5. What is the purpose of the DISTINCT keyword?
+
+           The DISTINCT keyword in SQL is used to remove duplicate values from the result set and return only unique (distinct) values.
+
+Syntax: SELECT DISTINCT column_name
+         FROM table_name;
+
+Example: SELECT DISTINCT city
+         FROM Students;
+
+This query returns each city only once, even if multiple students are from the same city.
+
+Purpose:
+
+Eliminates duplicate records from the output.
+Displays only unique values from the specified column(s).
+
+ -- Q6. What is a column alias?
+             A column alias is a temporary name given to a column in the result of an SQL query. 
+It makes the output easier to read and understand. An alias does not change the actual column name in the table.
+
+Syntax: SELECT column_name AS alias_name
+        FROM table_name;
+
+Example:
+
+SELECT name AS Student_Name
+FROM Students;
+
+This query displays the name column with the temporary heading Student_Name in the result.
+
+Purpose of a column alias:
+
+Improves the readability of query results.
+Provides meaningful or shorter column names.
+Does not modify the original table structure.
+
+
+-- Q7. Which clause specifies the table name in a SELECT statement?
+
+         The FROM clause specifies the table name in a SELECT statement. It tells SQL which table to retrieve the data from.
+
+Syntax:
+
+SELECT column_name
+FROM table_name;
+
+Example:
+
+SELECT name, age
+FROM Students;
+
+In this example, Students is the table name specified in the FROM clause.
+
+-- Q8. Is SQL case-sensitive for keywords like SELECT and FROM?
+
+      No, SQL keywords such as SELECT, FROM, WHERE, and ORDER BY are not case-sensitive in most SQL database systems. You can write them in uppercase, lowercase, or mixed case.
+
+Example:
+
+SELECT * FROM Students;
+select * from Students;
+
+Both queries produce the same result.
+
+Note:
+Although SQL keywords are not case-sensitive, it is a common best practice to write keywords in UPPERCASE (e.g., SELECT, FROM) to improve readability.
+
+-- Q9. Can we retrieve multiple columns using a single SELECT statement?
+
+  Answer: Yes, you can retrieve multiple columns using a single SELECT statement by separating the column names with commas.
+
+Syntax:
+
+SELECT column1, column2, column3
+FROM table_name;
+
+Example:
+
+SELECT name, age, city
+FROM Students;
+
+This query retrieves the name, age, and city columns from the Students table.
+
+-- Q10. What happens if we specify a column name that does not exist in the table?
+
+     If you specify a column name that does not exist in the table, SQL returns an error because it cannot find the requested column.
+
+Example:
+
+SELECT salary
+FROM Students;
+
+If the Students table does not contain a salary column, the database will display an error such as:
+
+Unknown column 'salary' in 'field list'
+
+(The exact error message may vary depending on the database system.)
+
+Conclusion:
+Always ensure that the column names used in a SELECT statement exist in the specified table.
