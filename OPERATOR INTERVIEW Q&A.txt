@@ -1,0 +1,572 @@
+
+
+1. What are SQL Operators, and why are they used?
+
+      SQL Operators are special symbols or keywords used in SQL statements to perform operations on data. They help filter, compare, combine, and manipulate values in database queries.
+
+Why are SQL Operators used?
+
+SQL operators are used to:
+
+Retrieve specific data from a database.
+Compare values in conditions.
+Perform mathematical calculations.
+Combine multiple conditions.
+Search for patterns or ranges of values.
+Check for NULL values.
+Common Types of SQL Operators
+Arithmetic Operators – Perform mathematical operations.
++ (Addition)
+- (Subtraction)
+* (Multiplication)
+/ (Division)
+% (Modulus)
+
+Example:
+
+SELECT salary + 5000 AS new_salary
+FROM employees;
+
+Comparison (Relational) Operators – Compare two values.
+
+= (Equal to)
+!= or <> (Not equal to)
+> (Greater than)
+< (Less than)
+>= (Greater than or equal to)
+<= (Less than or equal to)
+
+Example:
+
+SELECT *
+FROM employees
+WHERE salary > 50000;
+
+Logical Operators – Combine multiple conditions.
+
+AND
+OR
+NOT
+
+Example:
+
+SELECT *
+FROM employees
+WHERE department = 'IT' AND salary > 50000;
+
+Special Operators
+
+BETWEEN – Selects values within a range.
+IN – Matches any value in a list.
+LIKE – Searches for a pattern.
+IS NULL – Checks for NULL values.
+EXISTS – Checks if a subquery returns rows.
+ANY and ALL – Compare a value with a set of values.
+
+Examples:
+
+SELECT *
+FROM employees
+WHERE salary BETWEEN 30000 AND 60000;
+SELECT *
+FROM employees
+WHERE name LIKE 'A%';
+Summary
+
+SQL operators are essential because they allow users to manipulate, compare, and filter data efficiently. 
+They make SQL queries more powerful and help retrieve exactly the information needed from a database.
+
+-- 2. What are the different types of SQL Operators?
+
+The different types of SQL operators are:
+
+1. Arithmetic Operators
+
+Used to perform mathematical calculations.
+
+Operator	Description
++	Addition
+-	Subtraction
+*	Multiplication
+/	Division
+%	Modulus (remainder)
+
+Example:
+
+SELECT salary + 1000 AS new_salary
+FROM employees;
+2. Comparison (Relational) Operators
+
+Used to compare two values.
+
+Operator	Description
+=	Equal to
+!= or <>	Not equal to
+>	Greater than
+<	Less than
+>=	Greater than or equal to
+<=	Less than or equal to
+
+Example:
+
+SELECT *
+FROM employees
+WHERE salary > 50000;
+3. Logical Operators
+
+Used to combine multiple conditions.
+
+Operator	Description
+AND	Returns TRUE if both conditions are TRUE
+OR	Returns TRUE if at least one condition is TRUE
+NOT	Reverses the result of a condition
+
+Example:
+
+SELECT *
+FROM employees
+WHERE department = 'HR' AND salary > 40000;
+4. Special Operators
+
+Used for specific types of conditions.
+
+Operator	Description
+BETWEEN	Checks if a value is within a range
+IN	Matches any value in a list
+LIKE	Searches for a pattern
+IS NULL	Checks for NULL values
+EXISTS	Checks if a subquery returns rows
+ANY	Compares with any value returned by a subquery
+ALL	Compares with all values returned by a subquery
+
+Example:
+
+SELECT *
+FROM employees
+WHERE salary BETWEEN 30000 AND 60000;
+Summary
+
+The main types of SQL operators are:
+
+Arithmetic Operators – Perform mathematical operations.
+Comparison (Relational) Operators – Compare values.
+Logical Operators – Combine or negate conditions.
+Special Operators – Handle ranges, patterns, lists, NULL values, and subqueries.
+
+
+-- 3. What is the difference between Arithmetic Operators and Comparison (Relational) Operators?
+
+| **Arithmetic Operators**                                     | **Comparison (Relational) Operators**                                       |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Used to perform mathematical calculations on numeric values. | Used to compare two values or expressions.                                  |
+| Return a numeric result.                                     | Return a Boolean result (TRUE or FALSE).                                    |
+| Common operators: `+`, `-`, `*`, `/`, `%`.                   | Common operators: `=`, `!=` or `<>`, `>`, `<`, `>=`, `<=`.                  |
+| Mainly used in the `SELECT` clause or calculations.          | Mainly used in the `WHERE`, `HAVING`, and `JOIN` conditions to filter data. |
+
+Examples
+
+Arithmetic Operator Example:
+
+SELECT salary + 5000 AS new_salary
+FROM employees;
+
+Adds 5000 to each employee's salary.
+
+Comparison (Relational) Operator Example:
+
+SELECT *
+FROM employees
+WHERE salary > 50000;
+
+Retrieves employees whose salary is greater than 50,000.
+
+Summary
+Arithmetic Operators perform mathematical operations and return numeric values.
+Comparison (Relational) Operators compare values and return TRUE or FALSE, helping filter records in SQL queries.
+
+
+--4. What is the difference between the = (Equal To) operator and the LIKE operator?
+
+The = (Equal To) operator and the LIKE operator are both used in SQL to compare values, but they serve different purposes.
+
+= (Equal To)	LIKE
+Used to find an exact match.	Used to find a pattern match.
+Does not use wildcard characters.	Uses wildcards such as % (any number of characters) and _ (a single character).
+Best for comparing complete values.	Best for searching partial text or patterns.
+Example using =
+SELECT * FROM Employees
+WHERE Name = 'John';
+
+Result: Returns only employees whose name is exactly John.
+
+Example using LIKE
+SELECT * FROM Employees
+WHERE Name LIKE 'Jo%';
+
+Result: Returns names that start with Jo, such as John, Joseph, Joanna, etc.
+
+In summary:
+
+Use = when you need an exact match.
+Use LIKE when you need to search using patterns or partial matches.
+
+-- 5. What is the difference between the <> operator and the != operator in SQL?
+
+           In SQL, both <> and != are used to represent "not equal to", but there is a small difference in terms of SQL standards.
+
+<> Operator	!= Operator
+Standard SQL operator for not equal to.	Non-standard SQL operator, but supported by many database systems (such as MySQL and SQL Server).
+Recommended for portability across different SQL databases.	May not be supported by all database systems.
+Preferred in SQL code that follows the SQL standard.	Used as an alternative where supported.
+Example using <>
+SELECT * FROM Employees
+WHERE Department <> 'HR';
+
+Result: Returns all employees who are not in the HR department.
+
+Example using !=
+SELECT * FROM Employees
+WHERE Department != 'HR';
+
+Result: Returns the same result in databases that support the != operator.
+
+In summary:
+
+Both <> and != mean "not equal to."
+<> is the standard SQL operator and is recommended for better compatibility across different database systems.
+
+-- 6. What is the difference between the AND, OR, and NOT logical operators?
+
+            The AND, OR, and NOT operators are logical operators in SQL used to combine or modify conditions in a WHERE clause.
+
+Operator	Purpose	Example
+AND	Returns rows only if all conditions are true.	WHERE Department = 'HR' AND Salary > 50000
+OR	Returns rows if at least one condition is true.	WHERE Department = 'HR' OR Department = 'IT'
+NOT	Reverses a condition (returns rows where the condition is not true).	WHERE NOT Department = 'HR'
+Example using AND
+SELECT * FROM Employees
+WHERE Department = 'IT' AND Salary > 50000;
+
+Result: Returns employees who work in IT and have a salary greater than 50,000.
+
+Example using OR
+SELECT * FROM Employees
+WHERE Department = 'HR' OR Department = 'Finance';
+
+Result: Returns employees who work in either HR or Finance.
+
+Example using NOT
+SELECT * FROM Employees
+WHERE NOT Department = 'HR';
+
+Result: Returns all employees who do not work in the HR department.
+
+In summary:
+
+AND → All conditions must be true.
+OR → At least one condition must be true.
+NOT → Reverses the condition (selects rows where the condition is false).
+
+-- 7. What is the difference between the BETWEEN operator and using >= and <= conditions?
+ 
+           The BETWEEN operator and using >= (greater than or equal to) and <= (less than or equal to) conditions are functionally equivalent in SQL when checking for values within a range.
+
+| **BETWEEN**                                           | **Using >= and <=**                                                       |
+| ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| Simpler and more readable for range checks.           | More explicit and flexible.                                               |
+| Includes both the lower and upper limits (inclusive). | Also includes both limits when using `>=` and `<=`.                       |
+| Best for straightforward range queries.               | Better when you need different comparison operators (such as `>` or `<`). |
+
+       Example
+
+Using BETWEEN:
+
+SELECT * FROM Employees
+WHERE Salary BETWEEN 30000 AND 50000;
+
+Using >= and <=:
+
+SELECT * FROM Employees
+WHERE Salary >= 30000
+  AND Salary <= 50000;
+
+Both queries return employees whose salary is between 30,000 and 50,000, including 30,000 and 50,000.
+
+In short: BETWEEN a AND b is equivalent to >= a AND <= b for inclusive range comparisons.
+
+
+-- 8. What is the purpose of the IN operator? How is it different from using multiple OR conditions?
+
+           The IN operator is used to check whether a value matches any value in a list. 
+It provides a shorter and more readable way to specify multiple possible values.
+
+Using IN
+
+SELECT * FROM Employees
+WHERE Department IN ('HR', 'Sales', 'IT');
+Using multiple OR conditions
+SELECT * FROM Employees
+WHERE Department = 'HR'
+   OR Department = 'Sales'
+   OR Department = 'IT';
+Difference
+IN Operator	Multiple OR Conditions
+Shorter and easier to read.	Longer and more repetitive.
+Best for checking one column against multiple values.	Can compare different columns or different conditions.
+Easier to maintain when the list of values changes.	Can become difficult to read with many conditions.
+
+In summary: The IN operator is a concise alternative to multiple OR conditions when checking if a single column matches one of several values. 
+Both approaches return the same results, but IN is generally more readable and easier to maintain.
+
+9. What is the purpose of the LIKE operator?
+
+    The LIKE operator is used in SQL to search for a specified pattern in a column. 
+It is commonly used with wildcard characters to find partial matches in text data.
+
+Wildcards Used with LIKE
+% – Represents zero or more characters.
+_ – Represents exactly one character.
+Examples
+
+Find employees whose names start with A:
+
+SELECT * FROM Employees
+WHERE Name LIKE 'A%';
+
+Find employees whose names end with n:
+
+SELECT * FROM Employees
+WHERE Name LIKE '%n';
+
+Find employees whose names contain an:
+
+SELECT * FROM Employees
+WHERE Name LIKE '%an%';
+
+Find employees whose names have five letters and start with S:
+
+SELECT * FROM Employees
+WHERE Name LIKE 'S____';
+Summary
+
+The LIKE operator is used for pattern matching in text columns. It helps you search for data based on partial text rather than requiring an exact match, using % and _ as wildcard characters.
+
+
+-- 10. What is the difference between the % and _ wildcards used with the LIKE operator?
+
+           The % and _ wildcards are used with the LIKE operator for pattern matching in SQL, but they have different meanings
+
+| **Wildcard** | **Meaning**                          | **Example**                                                       |
+| ------------ | ------------------------------------ | ----------------------------------------------------------------- |
+| **`%`**      | Matches **zero or more characters**. | `LIKE 'A%'` → Matches **Alice**, **Andrew**, **A**, etc.          |
+| **`_`**      | Matches **exactly one character**.   | `LIKE 'A_'` → Matches **An**, **Ax**, but not **A** or **Alice**. |
+
+         Examples
+
+Using %:
+
+SELECT * FROM Employees
+WHERE Name LIKE 'S%';
+
+Returns names starting with S, such as Sam, Sara, and Stephen.
+
+Using _:
+
+SELECT * FROM Employees
+WHERE Name LIKE 'J_n';
+
+Returns three-letter names that start with J and end with n, such as Jan, Jen, and Jon.
+
+Summary
+% → Matches zero, one, or many characters.
+_ → Matches exactly one character.
+
+Use % for flexible-length text matching and _ when you need to match a specific number of characters.
+
+-- 11. What is the difference between IS NULL and = NULL in SQL?
+
+              The IS NULL operator is used to check whether a column contains a NULL value, while = NULL does not work for checking NULL values.
+
+IS NULL	= NULL
+Correct way to check for NULL values.	Incorrect for checking NULL values.
+Returns rows where the column value is NULL.	Always evaluates to unknown and returns no matching rows.
+Example
+
+Using IS NULL (Correct):
+
+SELECT * FROM Employees
+WHERE Manager_ID IS NULL;
+
+Using = NULL (Incorrect):
+
+SELECT * FROM Employees
+WHERE Manager_ID = NULL;
+Why?
+
+A NULL value represents missing or unknown data. Since its value is unknown, it cannot be compared using = or !=. SQL provides the special operators IS NULL and IS NOT NULL to test for NULL values.
+
+Summary
+IS NULL → Checks whether a value is NULL (correct).
+= NULL → Does not work for NULL comparisons (incorrect).
+Use IS NOT NULL to find rows that contain a non-NULL value.
+
+
+-- 12. What is the difference between IS NOT NULL and NOT NULL?
+
+      The IS NOT NULL and NOT NULL terms are used for different purposes in SQL.
+
+| **`IS NOT NULL`**                                 | **`NOT NULL`**                                                  |
+| ------------------------------------------------- | --------------------------------------------------------------- |
+| Used in SQL queries to check for non-NULL values. | Used when creating or modifying a table to prevent NULL values. |
+| Appears in the `WHERE` clause.                    | Defined as a column constraint.                                 |
+
+
+Example 1: Using IS NOT NULL (Query)
+SELECT * FROM Employees
+WHERE Email IS NOT NULL;
+
+This query returns all employees whose Email field contains a value.
+
+Example 2: Using NOT NULL (Table Constraint)
+CREATE TABLE Employees (
+    Employee_ID INT,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100)
+);
+
+In this table:
+
+Name must have a value because it is defined as NOT NULL.
+Email can be NULL because it has no NOT NULL constraint.
+
+Summary
+IS NOT NULL → Used in a WHERE clause to find rows where a column has a value.
+NOT NULL → A column constraint that prevents NULL values from being stored in that column.
+
+-- 13. What are Bitwise Operators in SQL, and where are they commonly used?
+
+             Bitwise operators in SQL are operators that perform operations on individual bits of integer values at the binary level. 
+They are used to manipulate and compare data stored as bit patterns.
+
+| **Operator** | **Purpose**              | **Example** |    |    |
+| ------------ | ------------------------ | ----------- | -- | -- |
+| `&`          | Bitwise AND              | `5 & 3`     |    |    |
+| `            | `                        | Bitwise OR  | `5 | 3` |
+| `^`          | Bitwise XOR              | `5 ^ 3`     |    |    |
+| `~`          | Bitwise NOT (complement) | `~5`        |    |    |
+| `<<`         | Left shift               | `5 << 1`    |    |    |
+| `>>`         | Right shift              | `5 >> 1`    |    |    |
+
+
+Example
+SELECT 5 & 3 AS Result;
+
+Binary representation:
+
+5 = 101
+3 = 011
+---------
+& = 001
+
+Result:
+
+1
+Common Uses of Bitwise Operators
+Storing multiple Boolean flags in a single integer column (e.g., user permissions).
+Managing access control systems where each bit represents a permission.
+Working with low-level data processing and binary data.
+Optimizing storage by combining multiple true/false values into one field.
+Example: Checking Permissions
+
+Suppose a permissions column stores values:
+
+1 = Read permission
+2 = Write permission
+4 = Delete permission
+
+To check if a user has Write permission:
+
+SELECT * FROM Users
+WHERE Permissions & 2 = 2;
+
+Summary: Bitwise operators work at the binary level and are commonly used for flags, permissions,
+ and compact data storage where individual bits represent different settings.
+
+-- 14. What is the difference between the Bitwise AND (&) operator and the Logical AND operator?
+
+            The Bitwise AND (&) operator and the Logical AND (AND) operator are different because they operate on different types of data.
+| **Bitwise AND (`&`)**                                     | **Logical AND (`AND`)**                                        |
+| --------------------------------------------------------- | -------------------------------------------------------------- |
+| Performs operations on individual bits of integer values. | Combines two or more Boolean conditions in a SQL query.        |
+| Returns a numeric result.                                 | Returns `TRUE`, `FALSE`, or `UNKNOWN`.                         |
+| Used for bit manipulation and flags.                      | Used mainly in `WHERE`, `HAVING`, and conditional expressions. |
+
+Example of Bitwise AND (&)
+SELECT 5 & 3 AS Result;
+
+Binary calculation:
+
+5 = 101
+3 = 011
+---------
+& = 001
+
+Result:
+
+1
+Example of Logical AND (AND)
+SELECT * FROM Employees
+WHERE Department = 'IT'
+  AND Salary > 50000;
+
+This returns employees who satisfy both conditions:
+
+Department is IT
+Salary is greater than 50,000
+Summary
+& (Bitwise AND) → Compares bits in numbers and returns a numeric value.
+AND (Logical AND) → Combines conditions and returns rows where all conditions are true.
+
+-- 15. What is the difference between the Left Shift (<<) operator and the Right Shift (>>) operator?
+
+   The Left Shift (<<) and Right Shift (>>) operators are bitwise operators that move the bits of a binary number to the left or right by a specified number of positions.
+
+| **Left Shift (`<<`)**                             | **Right Shift (`>>`)**                                                                                       |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Moves bits toward the left.                       | Moves bits toward the right.                                                                                 |
+| Adds zeros to the right side of the binary value. | Removes bits from the right side and fills positions with zeros (or preserves the sign bit in some systems). |
+| Generally multiplies a number by powers of 2.     | Generally divides a number by powers of 2.                                                                   |
+
+Example: Left Shift (<<)
+SELECT 5 << 1 AS Result;
+
+Binary:
+
+5 = 0101
+Left shift by 1:
+   1010
+
+Result:
+
+10
+
+(5 × 2 = 10)
+
+Example: Right Shift (>>)
+SELECT 8 >> 1 AS Result;
+
+Binary:
+
+8 = 1000
+Right shift by 1:
+    0100
+
+Result:
+
+4
+
+(8 ÷ 2 = 4)
+
+Summary
+<< Left Shift → Moves bits left and increases the value (equivalent to multiplying by 2 for each shift).
+>> Right Shift → Moves bits right and decreases the value (equivalent to dividing by 2 for each shift).
