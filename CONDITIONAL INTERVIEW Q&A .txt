@@ -1,0 +1,666 @@
+                    
+                               SQL Conditional Functions – Interview   Questions
+
+-- 1. What are Conditional Functions in SQL, and why are they used?
+
+               Conditional functions in SQL are functions that allow you to perform logic-based operations by evaluating conditions and returning different values depending on whether a condition is true or false.
+
+They are used to:
+
+Apply decision-making logic directly within SQL queries.
+Replace or transform values based on specific conditions.
+Handle NULL values and avoid errors.
+Create more meaningful and readable results.
+Common Conditional Functions in SQL
+CASE – Performs conditional logic similar to IF...ELSE.
+
+Example:
+
+SELECT Name,
+       CASE
+           WHEN Salary >= 50000 THEN 'High'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+IF() (available in some databases like MySQL) – Returns one value if a condition is true and another if false.
+
+Example:
+
+SELECT Name,
+       IF(Salary >= 50000, 'High', 'Low') AS Salary_Level
+FROM Employees;
+COALESCE() – Returns the first non-NULL value from a list.
+
+Example:
+
+SELECT COALESCE(Phone, 'No Phone') AS Contact
+FROM Employees;
+NULLIF() – Returns NULL if two expressions are equal; otherwise, returns the first expression.
+
+Example:
+
+SELECT NULLIF(Status, 'Inactive')
+FROM Employees;
+Summary
+
+Conditional functions in SQL are used to introduce decision-making into queries, allowing you to display, replace, or calculate values based on conditions without needing separate programming logic.
+ They make SQL queries more flexible and powerful.
+
+-- 2. What is the difference between the IF() function and the CASE statement in SQL?
+
+           The IF() function and the CASE statement are both used for conditional logic in SQL, but they differ in flexibility, usage, and database support.
+
+| **IF() Function**                                                | **CASE Statement**                                                          |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| A simple conditional function that checks one condition.         | A more powerful conditional expression that can handle multiple conditions. |
+| Available only in some databases (such as MySQL).                | Supported by almost all major SQL databases.                                |
+| Best for simple true/false decisions.                            | Best for complex decision-making logic.                                     |
+| Returns one value if the condition is true and another if false. | Can evaluate multiple conditions and return different results.              |
+
+
+Example using IF()
+SELECT Name,
+       IF(Salary >= 50000, 'High', 'Low') AS Salary_Level
+FROM Employees;
+
+If the salary is 50,000 or more, it returns High; otherwise, it returns Low.
+
+Example using CASE
+SELECT Name,
+       CASE
+           WHEN Salary >= 70000 THEN 'Very High'
+           WHEN Salary >= 50000 THEN 'High'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+
+This can handle multiple salary categories.
+
+Summary
+IF() → Simple two-way condition (if true → value 1, else → value 2).
+CASE → Handles multiple conditions and is more standard across SQL databases.
+Use IF() for simple checks (when supported) and CASE for complex or portable SQL queries.
+
+
+3. When should you use IF() instead of CASE?
+
+   You should use the IF() function instead of the CASE statement when you need a simple two-way condition and your SQL database supports IF() (such as MySQL).
+
+Use IF() when:
+You are checking only one condition.
+You need only two possible outcomes (true or false).
+You want a shorter and simpler expression.
+Example:
+SELECT Name,
+       IF(Status = 'Active', 'Yes', 'No') AS Is_Active
+FROM Employees;
+
+This checks one condition:
+
+If Status is Active → returns Yes
+Otherwise → returns No
+Use CASE instead when:
+You have multiple conditions.
+You need more complex logic.
+You want SQL code that works across different database systems.
+Example where CASE is better:
+SELECT Name,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+           ELSE 'Low'
+       END AS Salary_Category
+FROM Employees;
+Summary
+Use IF() → For simple if-else conditions with two outcomes.
+Use CASE → For multiple conditions, complex logic, and better database compatibility.
+
+-- 4. What is the syntax of the IF() function in MySQL?
+
+            In MySQL, the syntax of the IF() function is:
+
+IF(condition, value_if_true, value_if_false)
+
+Parameters:
+
+condition → The expression that is evaluated.
+value_if_true → The value returned if the condition is true.
+value_if_false → The value returned if the condition is false.
+
+Example:
+SELECT Name,
+       IF(Salary >= 50000, 'High Salary', 'Low Salary') AS Salary_Status
+FROM Employees;
+
+Output logic:
+
+If Salary >= 50000 → returns "High Salary"
+Otherwise → returns "Low Salary"
+Another example:
+SELECT Product_Name,
+       IF(Stock > 0, 'Available', 'Out of Stock') AS Availability
+FROM Products;
+
+Here, MySQL checks the stock value and displays the appropriate message.
+
+Summary:
+IF() in MySQL is a simple conditional function that returns one value when a condition is true and another value when the condition is false.
+
+-- 5. What is the purpose of the CASE statement in SQL?
+
+          The CASE statement in SQL is used to perform conditional logic by evaluating conditions and returning different values based on which condition is true. It works like an IF-ELSE statement in programming languages.
+
+Purpose of the CASE Statement:
+Allows multiple conditional checks in a SQL query.
+Creates custom values or categories based on existing data.
+Replaces complex nested conditions with readable logic.
+Works in SELECT, WHERE, ORDER BY, GROUP BY, and HAVING clauses.
+
+Syntax:
+
+CASE
+    WHEN condition1 THEN result1
+    WHEN condition2 THEN result2
+    ELSE result3
+END
+Example:
+SELECT Name,
+       Salary,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+           ELSE 'Low'
+       END AS Salary_Category
+FROM Employees;
+
+Logic:
+
+Salary ≥ 80,000 → High
+Salary ≥ 40,000 → Medium
+Otherwise → Low
+Summary:
+
+The CASE statement is used to add decision-making capability to SQL queries, allowing you to return different results based on multiple conditions. 
+It is more flexible and widely supported than simple conditional functions like IF().
+
+-- 6. What is the difference between a Simple CASE and a Searched CASE statement?
+
+          The difference between a Simple CASE and a Searched CASE statement is how they evaluate condition
+
+| **Simple CASE**                                         | **Searched CASE**                                          |
+| ------------------------------------------------------- | ---------------------------------------------------------- |
+| Compares one expression with multiple possible values.  | Evaluates multiple independent conditions.                 |
+| Uses equality (`=`) comparisons automatically.          | Uses comparison operators like `>`, `<`, `=`, `LIKE`, etc. |
+| Best for checking a single column against fixed values. | Best for complex conditions and ranges.                    |
+
+
+1. Simple CASE Syntax
+CASE expression
+    WHEN value1 THEN result1
+    WHEN value2 THEN result2
+    ELSE result3
+END
+Example:
+SELECT Name,
+       CASE Department
+           WHEN 'IT' THEN 'Technology'
+           WHEN 'HR' THEN 'Human Resources'
+           ELSE 'Other'
+       END AS Department_Name
+FROM Employees;
+
+Here, the Department value is compared with specific values.
+
+2. Searched CASE Syntax
+CASE
+    WHEN condition1 THEN result1
+    WHEN condition2 THEN result2
+    ELSE result3
+END
+Example:
+SELECT Name,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+
+Here, different conditions are evaluated.
+
+Summary
+Simple CASE → Compares one expression to multiple values.
+Searched CASE → Evaluates multiple conditions and is more flexible.
+Use Simple CASE for direct value matching and Searched CASE for complex logic.
+
+-- 7. What is a Nested CASE statement, and when would you use it?
+
+    A Nested CASE statement is a CASE statement placed inside another CASE statement. It is used when you need to evaluate additional conditions within an already existing condition.
+
+Purpose of Nested CASE:
+Handles more complex decision-making logic.
+Allows multiple levels of condition checking.
+Useful when one condition depends on the result of another condition.
+Syntax:
+CASE
+    WHEN condition1 THEN
+        CASE
+            WHEN condition2 THEN result1
+            ELSE result2
+        END
+    ELSE result3
+END
+Example:
+SELECT Name,
+       Salary,
+       CASE
+           WHEN Department = 'IT' THEN
+               CASE
+                   WHEN Salary >= 60000 THEN 'IT - High Salary'
+                   ELSE 'IT - Low Salary'
+               END
+           ELSE 'Non-IT Employee'
+       END AS Employee_Status
+FROM Employees;
+
+Logic:
+
+If the employee is in the IT department, check the salary.
+Salary ≥ 60,000 → "IT - High Salary"
+Otherwise → "IT - Low Salary"
+If not in IT → "Non-IT Employee"
+When to use Nested CASE:
+
+Use it when a second decision must be made only after the first condition is satisfied. However, if the logic becomes too complex, using multiple conditions in a single CASE statement or restructuring the query may improve readability.
+
+Summary: A Nested CASE statement is used for multi-level conditional logic, where one condition leads to another condition being evaluated.
+
+-- 8. In a CASE statement, how does SQL decide which condition to execute first?
+
+            In a CASE statement, SQL evaluates conditions from top to bottom and executes the first condition that evaluates to true.
+ Once a matching condition is found, SQL returns the corresponding result and stops checking the remaining conditions.
+
+Example:
+SELECT Name,
+       Salary,
+       CASE
+           WHEN Salary >= 40000 THEN 'Medium'
+           WHEN Salary >= 80000 THEN 'High'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+
+For an employee with a salary of 90,000:
+
+First condition: Salary >= 40000 → True
+SQL returns "Medium"
+The second condition (Salary >= 80000) is never checked.
+
+Correct ordering:
+SELECT Name,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+
+Now, a salary of 90,000 returns "High" because the more specific condition is checked first.
+
+Summary:
+SQL checks WHEN conditions in the order they are written.
+The first true condition is executed.
+Remaining conditions are ignored after a match is found.
+Place more specific conditions before broader conditions to get the expected results.
+
+-- 9. What happens if none of the WHEN conditions match and the ELSE clause is not provided?
+
+         If none of the WHEN conditions in a CASE statement match and the ELSE clause is not provided, SQL returns NULL as the result.
+
+Example:
+SELECT Name,
+       Salary,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+       END AS Salary_Level
+FROM Employees;
+
+Result:
+
+Salary = 90,000 → High
+Salary = 50,000 → Medium
+Salary = 25,000 → NULL (no condition matched and no ELSE provided)
+With an ELSE clause:
+SELECT Name,
+       Salary,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+
+Now, salaries below 40,000 return Low instead of NULL.
+
+Summary:
+If no WHEN condition matches and there is no ELSE, the CASE statement returns NULL.
+Adding an ELSE clause provides a default value for unmatched cases.
+
+-- 10. Can multiple WHEN conditions be TRUE in a CASE statement? Which result will SQL
+return?
+
+       Yes, multiple WHEN conditions can be TRUE in a CASE statement. However, SQL will return the result of the first WHEN condition that evaluates to TRUE and will ignore all remaining conditions.
+
+Example:
+SELECT Name,
+       Salary,
+       CASE
+           WHEN Salary >= 40000 THEN 'Medium'
+           WHEN Salary >= 80000 THEN 'High'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+
+For an employee with a salary of 90,000:
+
+Salary >= 40000 → TRUE
+Salary >= 80000 → TRUE
+SQL returns "Medium" because it is the first matching condition.
+Correct ordering:
+SELECT Name,
+       Salary,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+
+Now, a salary of 90,000 returns "High" because the more specific condition appears first.
+
+Summary:
+Multiple WHEN conditions can be true.
+SQL evaluates conditions from top to bottom.
+The first true WHEN condition determines the result.
+The order of WHEN clauses is important.
+
+-- 11. Is the IF() function available in all database systems? Explain.
+
+          No, the IF() function is not available in all database systems. It is a database-specific function, 
+mainly supported by MySQL and some other systems, but it is not part of standard SQL.
+
+Examples:
+
+MySQL (supports IF()):
+
+SELECT Name,
+       IF(Salary >= 50000, 'High', 'Low') AS Salary_Level
+FROM Employees;
+
+SQL Server, PostgreSQL, Oracle (do not use IF() in this form):
+These databases typically use the CASE statement instead:
+
+SELECT Name,
+       CASE
+           WHEN Salary >= 50000 THEN 'High'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+Why use CASE instead?
+CASE is part of the SQL standard.
+It works across most database systems.
+It supports more complex conditions.
+Summary:
+IF() → Available mainly in MySQL; useful for simple conditions.
+CASE → Standard SQL and supported by almost all major databases; preferred for portability.
+
+-- 12. Which is the ANSI SQL standard for implementing conditional logic: IF() or CASE?
+
+             The ANSI SQL standard for implementing conditional logic is the CASE statement, not the IF() function.
+
+Explanation:
+CASE is part of the official SQL standard and is supported by most database systems, including MySQL, SQL Server, Oracle, and PostgreSQL.
+IF() is a database-specific function (commonly available in MySQL) and is not part of the ANSI SQL standard.
+
+Example using ANSI SQL CASE:
+SELECT Name,
+       CASE
+           WHEN Salary >= 50000 THEN 'High'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+Summary:
+✅ CASE → ANSI SQL standard, portable across databases.
+❌ IF() → Vendor-specific function, mainly used in MySQL.
+
+-- 13. In real-time projects, where are CASE statements commonly used?
+
+        In real-time projects, CASE statements are commonly used to apply business rules, data transformations, categorization, and conditional calculations directly within SQL queries.
+
+Common Real-Time Uses of CASE Statements:
+1. Data Categorization
+
+Used to group data into meaningful categories.
+
+Example: Employee salary classification
+
+SELECT Employee_Name,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+           ELSE 'Low'
+       END AS Salary_Category
+FROM Employees;
+2. Creating Status Labels
+
+Used to convert codes into readable values.
+
+Example: Order status
+
+SELECT Order_ID,
+       CASE Status
+           WHEN 1 THEN 'Pending'
+           WHEN 2 THEN 'Completed'
+           WHEN 3 THEN 'Cancelled'
+           ELSE 'Unknown'
+       END AS Order_Status
+FROM Orders;
+3. Conditional Calculations
+
+Used to calculate values based on conditions.
+
+Example: Applying discounts
+
+SELECT Product_Name,
+       Price,
+       CASE
+           WHEN Price > 1000 THEN Price * 0.90
+           ELSE Price
+       END AS Final_Price
+FROM Products;
+4. Data Reporting and Dashboards
+
+Used in reports to create custom columns and summaries.
+
+Example: Customer segmentation
+
+SELECT Customer_Name,
+       CASE
+           WHEN Total_Purchase > 100000 THEN 'Premium'
+           WHEN Total_Purchase > 50000 THEN 'Regular'
+           ELSE 'Basic'
+       END AS Customer_Type
+FROM Customers;
+5. Handling NULL or Missing Values
+
+Used to replace or display alternative values.
+
+SELECT Employee_Name,
+       CASE
+           WHEN Phone IS NULL THEN 'No Phone'
+           ELSE Phone
+       END AS Contact
+FROM Employees;
+6. Conditional Sorting
+
+Used with ORDER BY to customize sorting logic.
+
+SELECT *
+FROM Employees
+ORDER BY
+CASE
+    WHEN Department = 'Management' THEN 1
+    ELSE 2
+END;
+Summary:
+
+In real-world applications, CASE statements are mainly used for:
+
+Business rule implementation
+Report generation
+Data transformation
+Status and category creation
+Conditional calculations
+Custom sorting and filtering
+
+They are widely used in banking, e-commerce, healthcare, HR systems, analytics, and reporting applications.
+
+-- 14. Can you use a CASE statement inside the SELECT, ORDER BY, GROUP BY, and WHERE clauses?
+
+            Yes, a CASE statement can be used inside the SELECT, ORDER BY, GROUP BY, and WHERE clauses in SQL. It allows you to apply conditional logic in different parts of a query.
+
+1. Using CASE in the SELECT clause
+
+Used to create calculated or custom columns.
+
+SELECT Name,
+       Salary,
+       CASE
+           WHEN Salary >= 50000 THEN 'High'
+           ELSE 'Low'
+       END AS Salary_Level
+FROM Employees;
+2. Using CASE in the ORDER BY clause
+
+Used for custom sorting.
+
+SELECT Name, Department
+FROM Employees
+ORDER BY
+CASE
+    WHEN Department = 'HR' THEN 1
+    WHEN Department = 'IT' THEN 2
+    ELSE 3
+END;
+
+This sorts HR employees first, then IT employees.
+
+3. Using CASE in the GROUP BY clause
+
+Used to group data based on calculated categories.
+
+SELECT
+    CASE
+        WHEN Salary >= 50000 THEN 'High'
+        ELSE 'Low'
+    END AS Salary_Group,
+    COUNT(*) AS Employee_Count
+FROM Employees
+GROUP BY
+    CASE
+        WHEN Salary >= 50000 THEN 'High'
+        ELSE 'Low'
+    END;
+
+This groups employees into salary categories.
+
+4. Using CASE in the WHERE clause
+
+Used to apply conditional filtering.
+
+SELECT *
+FROM Employees
+WHERE
+    Salary >
+    CASE
+        WHEN Department = 'IT' THEN 60000
+        ELSE 40000
+    END;
+
+This applies different salary filters based on the department.
+
+Summary:
+Clause	Purpose of CASE
+SELECT	Create conditional output columns
+ORDER BY	Apply custom sorting rules
+GROUP BY	Group rows based on conditions
+WHERE	Apply conditional filtering
+
+CASE is a flexible SQL feature that can be used in many parts of a query to implement business logic directly in the database.
+
+-- 15. What are the advantages of using CASE statements instead of writing multiple SQL queries?
+
+  The advantages of using CASE statements instead of writing multiple SQL queries are that they make queries simpler, faster to maintain, and more flexible by allowing conditional logic within a single query.
+
+Advantages of CASE Statements:
+1. Reduces the Number of Queries
+
+Instead of writing separate queries for different conditions, a single query can handle multiple scenarios.
+
+Without CASE:
+
+One query for high salary employees
+Another query for medium salary employees
+Another query for low salary employees
+
+With CASE:
+
+SELECT Name,
+       CASE
+           WHEN Salary >= 80000 THEN 'High'
+           WHEN Salary >= 40000 THEN 'Medium'
+           ELSE 'Low'
+       END AS Salary_Category
+FROM Employees;
+2. Improves Query Readability
+
+A single CASE statement is easier to understand than multiple queries combined with UNION or separate logic.
+
+3. Improves Performance
+
+A single query can reduce:
+
+Multiple database calls
+Repeated table scans
+Application-side processing
+4. Implements Business Rules Directly
+
+Complex business logic can be handled inside SQL.
+
+Example:
+
+Customer classification
+Discount calculation
+Employee grading
+Order status mapping
+5. Makes Reports More Flexible
+
+CASE statements are commonly used in dashboards and reports to create dynamic categories and calculations.
+
+6. Easier Maintenance
+
+When business rules change, you only need to update the conditions inside the CASE statement instead of modifying multiple SQL queries.
+
+Summary:
+
+Using CASE statements helps to:
+
+✅ Reduce multiple queries into one
+✅ Make SQL code cleaner and easier to maintain
+✅ Apply complex business logic
+✅ Improve reporting capabilities
+✅ Reduce unnecessary database operations
+
+CASE statements provide a structured way to handle conditional logic directly within SQL queries.
+
