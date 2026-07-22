@@ -1,0 +1,547 @@
+
+
+-- Interview Questions
+
+-- 1. What is a SQL Function?
+        An SQL function is a built-in or user-defined routine that performs a specific operation
+        on data and returns a value.
+	Functions help you manipulate, calculate, format, or summarize data in SQL queries.
+    
+-- 2. What is the purpose of using SQL Functions?
+		The purpose of using SQL functions is to perform operations on data efficiently and return a result. 
+    They help simplify queries, reduce repetitive code, and make data processing easier.	
+       1. Perform calculations
+       2. Manipulate text
+       3. Work with dates and times
+       4. Summarize data.
+       5. Improve query readability
+       6. Reduce repetitive code
+       7. Format data
+       
+-- 3. What are the different types of SQL Functions?
+       SQL functions are broadly classified into two main types:
+         1. Single- row functions
+           a. string function
+           b.  Numeric functions
+           c.  date function
+           d. conversion function
+           
+		2. Multi - row functions
+           a. COUNT()
+           b. sum()
+           c.avg()
+           d. max()
+           e. min()
+           
+-- 4. What is the difference between Single Row Functions and Aggregate Functions?
+       Single Row Functions	                      Aggregate Functions
+Operate on one row at a time.                  	Operate on multiple rows (a group of rows).
+Return one result for each row.             	Return one result for the entire group.
+Can be used in the SELECT, WHERE,               Often used with the GROUP BY clause to summarize data.
+and ORDER BY clauses. 	
+Used for manipulating strings,                  Used for calculating totals, averages, 
+ numbers,dates, etc.                                               counts, minimums, and maximums.
+	
+Examples: UPPER(), LOWER(), ROUND(),             Examples: COUNT(), SUM(), AVG(), MIN(), MAX()
+LENGTH(), NOW()	
+
+       
+-- 5.What is a Single Row Function (Scalar Function)?
+    A Single Row Function (also called a Scalar Function) is an SQL function that operates
+      on one row at a time and returns one value for each row.
+    These functions are used to manipulate or transform data such as text, numbers, dates, and data types.
+          Characteristics of Single Row Functions
+              1.Operate on individual rows.
+              2.Return one result for each row.
+              3.Can accept one or more arguments.
+              4.Can be used in the SELECT, WHERE, ORDER BY, and GROUP BY clauses.
+              
+Types of Single Row Functions
+String Functions – UPPER(), LOWER(), LENGTH(), SUBSTRING()
+Numeric Functions – ROUND(), ABS(), CEILING(), FLOOR()
+Date Functions – CURRENT_DATE, NOW(), YEAR(), MONTH()
+Conversion Functions – CAST(), CONVERT()
+             Advantages of Single Row Functions
+			- Simplify SQL queries.
+			-Improve data formatting and presentation.
+			- Perform calculations on individual values.
+			- Reduce repetitive code.
+             - Make queries easier to read and maintain.
+
+
+A Single Row Function (Scalar Function) is an SQL function that processes one row at a time 
+and returns one value for each row. It is used to manipulate strings, numbers, dates, 
+and other individual data values. Examples include UPPER(), LOWER(), ROUND(), LENGTH(), and NOW().
+
+
+-- 6.Why is it called a Scalar Function?
+
+ Scalar Function is called a scalar function because it processes one row at a time and 
+returns a single (scalar) value for each row. 
+Examples include UPPER(), LOWER(), ROUND(), and LENGTH().
+
+-- 7. Name the five types of Single Row Functions.
+        The five types of Single Row (Scalar) Functions in SQL are:
+
+         1.Character (String) Functions
+              Used to manipulate text or strings.
+              Examples: UPPER(), LOWER(), LENGTH(), SUBSTRING(), CONCAT()
+         2.Numeric Functions
+              Used to perform mathematical calculations.
+              Examples: ROUND(), ABS(), CEILING(), FLOOR(), MOD()
+         3.Date Functions
+              Used to work with dates and times.
+              Examples: CURRENT_DATE, NOW(), YEAR(), MONTH(), DATEDIFF()
+         4.Conversion Functions
+              Used to convert data from one data type to another.
+              Examples: CAST(), CONVERT(), TO_CHAR(), TO_DATE()
+         5.General Functions
+              Used to handle NULL values and perform miscellaneous operations.
+              Examples: COALESCE(), NULLIF(), IFNULL() (MySQL), ISNULL() (SQL Server), NVL() (Oracle)
+
+-- 8. What is the difference between UPPER() and LOWER() functions?
+
+                 UPPER()	                                              LOWER()
+             Converts all letters in a string to uppercase.	Converts all letters in a string to lowercase.
+             Used when you want text in capital letters.	Used when you want text in small letters.
+             Example: UPPER('hello') returns HELLO.	        Example: LOWER('HELLO') returns hello.
+
+-- 9. What is the purpose of the LENGTH() function?
+             The LENGTH() function is used to return the number of characters in a string.
+             It helps determine the length of text stored in a column or string.
+          syntax:Select LENGTH('string');
+          example:select LENGTH(' empname');
+
+ -- 10. What is the difference between CONCAT() and REPLACE()?
+CONCAT() combines two or more strings into a single string, 
+whereas REPLACE() replaces a specified part of a string with another string.
+                         CONCAT()	                             REPLACE()
+         Joins two or more strings into one string.	       Replaces a specified part of a string with another string.
+         Used to combine text values.	                       Used to modify existing text.
+         Takes two or more strings as input.	              Takes the original string, 
+                                                                 the text to find, and the replacement text as input.
+           example:SELECT CONCAT('John', ' ', 'Smith');          example:SELECT REPLACE('John Smith', 'Smith', 'Doe');
+            o/p:John Smith                                         o/p: John Doe
+
+-- 11. What is the difference between TRIM(), LTRIM(), and RTRIM()?
+
+            TRIM() removes spaces from both ends of a string, LTRIM() removes spaces from the left side, 
+            and RTRIM() removes spaces from the right side of a string.
+
+| Function      | Purpose                                         | Removes Spaces From |
+| ------------- | ----------------------------------------------- | ------------------- |
+| TRIM()        | Removes spaces from both sides of a string.     | Beginning and end   |SELECT TRIM('   Hello   ');
+| **`LTRIM()`** | Removes spaces from the left side of a string.  | Beginning only      |SELECT LTRIM('   Hello');
+| **`RTRIM()`** | Removes spaces from the right side of a string. | End only            |SELECT RTRIM('Hello   ');--->Hello
+
+-- 12. How does the SUBSTRING() function work in SQL?
+          
+               The SUBSTRING() function is used to extract a specific number of characters from a string,
+             starting from a given position. It is used for manipulating and retrieving parts of text data.
+
+        Uses of SUBSTRING()
+      -Extract a portion of text.
+      -Retrieve first or last characters of a value.
+      -Format data for reports.
+      -Separate parts of stored information.
+
+   syntax:SUBSTRING(string, start_position, length)
+          string → The original text.
+          start_position → The position where extraction begins.
+           length → The number of characters to extract.
+
+   example:SELECT SUBSTRING('Database', 1, 4); o/p:Data
+
+ -- 13. What is the purpose of the INSTR() function?
+    
+              The INSTR() function is an SQL Character (String) Function used to find the position of a specified substring within a string.
+              It returns the starting position (index number) of the first occurrence of the searched character or substring. 
+              If the substring is not found, it returns 0 (in many SQL databases such as Oracle).
+syntax:
+INSTR(string, substring)
+string → The original string to search.
+substring → The character or text to find.
+
+example:
+SELECT INSTR('Database', 'base'); o/p-> 5
+Explanation:
+In the word "Database", the substring "base" starts at the 5th position
+
+Uses of INSTR()
+Find the location of a character or word inside a string.
+Validate whether a string contains specific text.
+Extract parts of a string when combined with functions like SUBSTRING().
+
+
+ --  14. What is the difference between ROUND(), CEIL(), and FLOOR()?
+
+         The ROUND(), CEIL(), and FLOOR() functions are SQL Numeric Functions used to modify numeric values
+
+| **Function**               | **Purpose**                                                                        | **Example**    | **Output** |
+| -------------------------- | ---------------------------------------------------------------------------------- | -------------- | ---------- |
+| **`ROUND()`**              | Rounds a number to the nearest value based on decimal places.                      | `ROUND(12.56)` | `13`       |
+| **`CEIL()` / `CEILING()`** | Returns the smallest integer greater than or equal to a number (always rounds up). | `CEIL(12.56)`  | `13`       |
+| **`FLOOR()`**              | Returns the largest integer less than or equal to a number (always rounds down).   | `FLOOR(12.56)` | `12`       |
+
+round:SELECT ROUND(15.678, 2);  o/p->15.68
+ceil  :SELECT CEIL(15.2);  o/p->16
+floor: SELECT FLOOR(15.9);   o/p->15
+
+Key Difference
+ROUND() → Rounds to the nearest value.
+CEIL() → Always rounds up to the next integer.
+FLOOR() → Always rounds down to the previous integer.
+
+
+-- 15. What is the purpose of the MOD() function? Give a real-time example.
+
+    The MOD() function is an SQL Numeric Function used to find the remainder after division of one number by another.
+
+Syntax
+MOD(number1, number2)
+
+number1 → The number to be divided (dividend).
+number2 → The number by which it is divided (divisor).
+Returns the remainder.
+
+Example
+SELECT MOD(10, 3);
+
+Output:
+1
+
+Real-Time Example: Checking Even or Odd Numbers
+
+A company wants to identify whether employee IDs are even or odd for assigning shifts:
+
+SELECT employee_id,
+       MOD(employee_id, 2) AS result
+FROM employees;
+Example output:
+
+employee_id	result
+101	1
+102	0
+103	1
+Result 0 → Even employee ID
+Result 1 → Odd employee ID
+Other Real-Time Uses
+Dividing students into groups.
+Assigning alternate tasks or shifts.
+Implementing circular counting systems.
+Finding whether a number is divisible by another number.
+Exam Answer:
+
+The MOD() function is used to return the remainder after division of two numbers. It is commonly used to check divisibility and identify even or odd values.
+
+Example:
+
+SELECT MOD(10, 3);
+
+Output: 1
+
+Get smarter responses, upload files and imag
+
+
+-- 16. What is the difference between ABS(), POWER(), and SQRT()?
+              ABS() returns the absolute value of a number, POWER() returns a number raised to a specified power, 
+             and SQRT() returns the square root of a number. These functions are used for numeric calculations in SQL.
+
+| Function      | Purpose                                            | Example       | Output |
+| ------------- | -------------------------------------------------- | ------------- | ------ |
+| **`ABS()`**   | Returns the absolute (positive) value of a number. | `ABS(-25)`    | `25`   |
+| **`POWER()`** | Returns a number raised to a specified power.      | `POWER(2, 3)` | `8`    |
+| **`SQRT()`**  | Returns the square root of a number.               | `SQRT(25)`    | `5`    |
+
+1. ABS() Function
+
+Used to remove the negative sign from a number.
+
+SELECT ABS(-100);
+
+Output:
+
+100
+
+Real-time example:
+Finding the difference between expected and actual sales values, regardless of whether the difference is positive or negative.
+
+2. POWER() Function
+
+Used to calculate the value of a number raised to a given exponent.
+
+SELECT POWER(5, 2);
+
+Output:
+
+25
+
+(5 × 5 = 25)
+
+Real-time example:
+Calculating area calculations, such as the square of a product dimension.
+3. SQRT() Function
+
+Used to find the square root of a number.
+
+SELECT SQRT(81);
+
+Output:
+
+9
+
+Real-time example:
+Calculating the distance between two points using mathematical formulas.
+
+
+-- 17. What is the difference between CURDATE(), NOW(), and CURTIME()?
+          CURDATE() returns the current date, 
+         NOW() returns the current date and time, and CURTIME() returns the current time only. 
+        These functions are used to retrieve current date and time values in SQL.
+
+| Function        | Purpose                            | Returns     | Example Output        |
+| --------------- | ---------------------------------- | ----------- | --------------------- |
+| **`CURDATE()`** | Returns the current date only.     | Date        | `2026-07-09`          |
+| **`NOW()`**     | Returns the current date and time. | Date + Time | `2026-07-09 14:30:45` |
+| **`CURTIME()`** | Returns the current time only.     | Time        | `14:30:45`            |
+1. CURDATE() Function
+
+Returns the current system date.
+
+SELECT CURDATE();
+
+Output:
+
+2026-07-09
+
+2. NOW() Function
+
+Returns the current date and time.
+
+SELECT NOW();
+
+Output:
+
+2026-07-09 14:30:45
+
+3. CURTIME() Function
+
+Returns the current system time.
+
+SELECT CURTIME();
+
+Output:
+
+14:30:45
+
+-- 18. What is the difference between YEAR(), MONTH(), and DAY() functions?
+              YEAR(), MONTH(), and DAY() functions are used to extract the year,
+            month, and day values respectively from a date. They help in filtering and analyzing date-based data in SQL.
+
+| Function      | Purpose                                    | Example               | Output |
+| ------------- | ------------------------------------------ | --------------------- | ------ |
+| **`YEAR()`**  | Extracts the year from a date.             | `YEAR('2026-07-09')`  | `2026` |
+| **`MONTH()`** | Extracts the month from a date.            | `MONTH('2026-07-09')` | `7`    |
+| **`DAY()`**   | Extracts the day of the month from a date. | `DAY('2026-07-09')`   | `9`    |
+
+
+SELECT 
+    YEAR('2026-07-09') AS Year,
+    MONTH('2026-07-09') AS Month,
+    DAY('2026-07-09') AS Day;
+
+| Year | Month | Day |
+| ---- | ----- | --- |
+| 2026 | 7     | 9   |
+
+real time example:
+SELECT *
+FROM employees
+WHERE YEAR(join_date) = 2026;
+
+This retrieves employees whose joining date falls in the year 2026.
+
+ -- 19. What is the difference between DATE_ADD() and DATEDIFF()?
+
+| **Function**     | **Purpose**                                  | **Returns**                  |
+| ---------------- | -------------------------------------------- | ---------------------------- |
+| **`DATE_ADD()`** | Adds a specified time interval to a date.    | A new date value             |
+| **`DATEDIFF()`** | Calculates the difference between two dates. | Number of days between dates |
+
+
+1. DATE_ADD() Function
+
+Used to add days, months, years, or other intervals to a date.
+
+Syntax:
+
+DATE_ADD(date, INTERVAL value unit)
+
+Example:
+
+SELECT DATE_ADD('2026-07-09', INTERVAL 10 DAY);
+
+Output:
+
+2026-07-19
+
+(10 days are added to the given date.)
+Real-time example:
+Calculating a customer's subscription expiry date by adding the subscription period to the start date.
+
+2. DATEDIFF() Function
+
+Used to find the number of days between two dates.
+
+Syntax:
+
+DATEDIFF(date1, date2)
+
+Example:
+
+SELECT DATEDIFF('2026-07-19', '2026-07-09');
+
+Output:
+
+10
+
+(There are 10 days between the two dates.)
+
+Real-time example:
+Calculating the number of days an employee has worked or the number of days between an order date and delivery date.
+
+Key Difference:
+DATE_ADD() → Adds an interval to a date and returns a new date.
+DATEDIFF() → Finds the difference between two dates and returns the number of days.
+
+Answer:
+
+DATE_ADD() is used to add a specified interval (days, months, years, etc.) to a date, 
+whereas DATEDIFF() is used to calculate the number of days between two dates.
+
+-- 20. What is the difference between CAST() and CONVERT()?
+
+      | **CAST()**                                                          | **CONVERT()**                                                                                                                              |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Converts a value from one data type to another.                     | Also converts a value from one data type to another, but provides additional formatting options in some databases (especially SQL Server). |
+| Follows the SQL standard and is supported by most database systems. | Database-specific syntax and features may vary.                                                                                            |
+| Syntax is simpler.                                                  | Often used for data formatting, especially with dates.                                                                                     |
+
+CAST() and CONVERT() are used to convert data from one data type to another. CAST() is a standard SQL function, while CONVERT() 
+is database-specific and often provides additional formatting features, especially for date and time conversions.
+
+1. CAST() Function
+Syntax:
+CAST(expression AS data_type)
+
+Example:
+SELECT CAST('100' AS INT);
+Output:
+100
+
+The string value '100' is converted into an integer.
+
+2. CONVERT() Function
+Syntax (SQL Server):
+CONVERT(data_type, expression)
+
+Example:
+SELECT CONVERT(INT, '100');
+Output:
+100
+
+ -- 21. What is the purpose of the IFNULL() function?
+
+      The IFNULL() function is used to replace NULL values with a specified value. 
+If the expression is not NULL, it returns the original value; otherwise, it returns the replacement value.
+
+syntax:
+IFNULL(expression, replacement_value)
+expression → The value or column to check.
+replacement_value → The value to return if the expression is NULL.
+Example
+SELECT IFNULL(NULL, 'No Data'); o/p-> no data
+
+example:
+SELECT employee_name,
+       IFNULL(bonus, 0) AS bonus_amount
+FROM employees;
+
+ -- 22. What is the difference between IFNULL() and COALESCE()?
+         
+             IFNULL() accepts two arguments and replaces a NULL value with a specified value, 
+whereas COALESCE() accepts multiple arguments and returns the first non-NULL value. COALESCE() is a standard SQL function, while IFNULL() is database-specific.
+
+| **IFNULL()**                                               | **COALESCE()**                                                   |
+| ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| Checks only **one value** and replaces it if it is `NULL`. | Checks **multiple values** and returns the first non-NULL value. |
+| Takes **two arguments** only.                              | Can take **two or more arguments**.                              |
+| Database-specific function (commonly used in MySQL).       | Standard SQL function supported by most databases.               |
+
+
+syntax:IFNULL(expression, replacement_value
+example:SELECT IFNULL(NULL, 'No Value');o/p->No Value
+
+COALESCE:
+
+SYNTAX:COALESCE(value1, value2, value3, ...)
+EXAMPLE:SELECT COALESCE(NULL, NULL, 'Default Value');O/P->DEFAULT VALUES
+
+-- 23. What is the purpose of the NULLIF() function?
+           The NULLIF() function is an SQL General Function used to compare two expressions and return NULL if they are equal.
+ If the two expressions are different, it returns the first expressio
+syntax:NULLIF(expression1, expression2)
+If expression1 = expression2 → returns NULL
+If expression1 ≠ expression2 → returns expression1
+
+example:SELECT NULLIF(10, 10);o/p->null
+Because both values are the same.
+
+example:SELECT NULLIF(10, 5);o/p->10
+Because the values are different, it returns the first value.
+
+Real-Time Example
+
+Suppose a sales table stores 0 when no discount is applied. You want to display it as NULL instead of 0
+
+Uses of NULLIF()
+Avoid division-by-zero errors.
+Convert unwanted values into NULL.
+Clean and standardize data.
+
+-- 24. How does the IF() function work in SQL?
+
+             The IF() function is used to perform conditional operations in SQL. It returns one value when the condition is true and
+ another value when the condition is false.
+
+Syntax (MySQL)
+
+IF(condition, value_if_true, value_if_false)
+
+condition → The condition to check.
+value_if_true → Value returned when the condition is true.
+value_if_false → Value returned when the condition is false.
+
+
+Example:
+
+SELECT IF(10 > 5, 'True', 'False');
+
+Output: True
+
+Real-Time Uses of IF()
+Categorizing data (High/Low, Pass/Fail, Active/Inactive).
+Displaying different values based on conditions.
+Creating simple conditional logic in queries.
+
+ -- 25. In what real-time scenarios would you use String Functions, Numeric Functions, Date
+Functions, Conversion Functions, and General Functions?
+
+              String Functions are used to manipulate text data such as names and addresses. Numeric Functions perform mathematical calculations like 
+rounding and finding remainders. Date Functions are used to work with dates and times, such as calculating the number of days between dates. 
+Conversion Functions convert data from one data type to another. General Functions handle NULL values and perform conditional operations in SQL.
+
+
+
+
+
