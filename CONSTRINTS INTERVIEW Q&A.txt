@@ -1,0 +1,89 @@
+
+SQL Constraints — Technical Interview Questions & Answers
+
+-- 1. What are SQL Constraints, and why are they used in a database?
+SQL Constraints are rules enforced on columns or tables that restrict the type of data that can be stored. They are used to maintain the accuracy, consistency, and reliability of data in a database — preventing invalid, duplicate, or inconsistent entries.
+
+-- 2. What is the difference between NOT NULL and NULL?
+- **NOT NULL**: A constraint that forces a column to always have a value; empty/missing values are not allowed.
+- **NULL**: The default state of a column (unless restricted) — it means the column is allowed to have "no value" or an unknown value. NULL is not the same as zero or an empty string.
+
+-- 3. What is the difference between a PRIMARY KEY and a UNIQUE constraint?
+| Aspect | PRIMARY KEY | UNIQUE |
+|---|---|---|
+| NULL values | Not allowed | Allowed (one or more, depending on RDBMS) |
+| Count per table | Only one | Multiple allowed |
+| Purpose | Uniquely identifies each row | Ensures column values are distinct |
+| Index type | Clustered index (by default, in most RDBMS) | Non-clustered index |
+
+-- 4. Can a table have more than one PRIMARY KEY?
+No. A table can have only **one** PRIMARY KEY. However, that primary key can be a **composite key**, meaning it can consist of multiple columns combined together to form uniqueness.
+
+-- 5. How many UNIQUE constraints can be created on a single table?
+Multiple UNIQUE constraints can be created on a single table — one per column or one per combination of columns, as needed. There's no fixed limit imposed by the UNIQUE constraint itself (though the database engine may have practical limits).
+
+-- 6. Can a PRIMARY KEY contain NULL values? Why or why not?
+No. A PRIMARY KEY cannot contain NULL values because its purpose is to uniquely identify every row, and NULL represents an unknown/missing value — allowing it would break the guarantee of uniqueness and identification.
+
+-- 7. Can a UNIQUE constraint allow NULL values? Explain the behavior in MySQL.
+Yes, a UNIQUE constraint allows NULL values. In MySQL specifically, a UNIQUE column can contain **multiple NULL values**, because MySQL treats each NULL as "unknown," and unknown values are never considered equal to one another — so they don't violate uniqueness. (Note: this differs from some other RDBMS like older SQL Server versions, which allow only one NULL per UNIQUE column.)
+
+-- 8. What is a FOREIGN KEY, and how does it maintain referential integrity?
+A FOREIGN KEY is a column (or set of columns) in one table that references the PRIMARY KEY (or a UNIQUE key) in another table. It maintains **referential integrity** by ensuring that a value inserted into the foreign key column must already exist in the referenced (parent) table — preventing "orphan" records that point to non-existent parent rows.
+
+--- 9. What is the purpose of the CHECK constraint, and where is it commonly used?
+The CHECK constraint restricts the values that can be inserted into a column by enforcing a specific condition/expression. It's commonly used for:
+- Validating numeric ranges (e.g., `age >= 18`)
+- Restricting values to a specific set (e.g., `gender IN ('M','F','O')`)
+- Enforcing business rules (e.g., `salary > 0`)
+
+-- 10. What is the purpose of the DEFAULT constraint in SQL?
+The DEFAULT constraint automatically assigns a predefined value to a column when no value is explicitly provided during an INSERT operation. It ensures columns aren't left NULL unnecessarily and simplifies data entry.
+
+-- 11. What is AUTO_INCREMENT in MySQL, and when should it be used?
+AUTO_INCREMENT is a MySQL attribute applied to a column (usually the PRIMARY KEY) that automatically generates a unique, sequentially increasing number each time a new row is inserted. It should be used when you need a system-generated unique identifier for each record, without manually assigning IDs — most commonly for surrogate primary keys.
+
+--- 12. What is the difference between PRIMARY KEY and FOREIGN KEY?
+| Aspect | PRIMARY KEY | FOREIGN KEY |
+|---|---|---|
+| Purpose | Uniquely identifies rows in its own table | Links to a PRIMARY KEY/UNIQUE key in another table |
+| Uniqueness | Must be unique | Can have duplicate values |
+| NULL | Not allowed | Allowed (unless combined with NOT NULL) |
+| Table count | Exists in the parent table | Exists in the child table |
+
+--- 13. What is the difference between CHECK and DEFAULT constraints?
+- **CHECK**: Validates that a value meets a specific condition before it's accepted (a gatekeeper/rule).
+- **DEFAULT**: Supplies a fallback value automatically when none is provided (doesn't validate anything).
+
+In short, CHECK restricts *what* values are allowed; DEFAULT decides *what happens* when no value is given.
+
+--- 14. Can a table contain both a PRIMARY KEY and a FOREIGN KEY? Explain.
+Yes. A table can have both. For example, in an `Orders` table, `order_id` can be the PRIMARY KEY (uniquely identifying each order), while `customer_id` can be a FOREIGN KEY referencing the `Customers` table. A column can even be both PRIMARY KEY and FOREIGN KEY simultaneously, as seen in weak/associative entities (e.g., a bridge table in a many-to-many relationship).
+
+--- 15. At what stage are SQL Constraints enforced?
+Constraints are enforced at **all stages** of data modification:
+- **Table creation**: Constraints are defined as part of the schema.
+- **Data insertion (INSERT)**: New rows are validated against constraints before being added.
+- **Data update (UPDATE)**: Modified values are re-validated to ensure they still satisfy constraints.
+- (Also during DELETE, in the case of FOREIGN KEY constraints with restrictions like `ON DELETE RESTRICT`.)
+
+--- 16. What happens if you try to insert a duplicate value into a PRIMARY KEY column?
+The database will reject the insert and throw an error (e.g., "Duplicate entry" in MySQL), because PRIMARY KEY values must be unique across all rows.
+
+--- 17. What happens if you insert a duplicate value into a UNIQUE column?
+The insert will fail with a constraint violation error, since UNIQUE columns do not allow duplicate (non-NULL) values.
+
+--- 18. What happens if you insert a NULL value into a NOT NULL column?
+The database will reject the insert and raise an error, since NOT NULL explicitly disallows missing/NULL values for that column.
+
+-- 19. What happens if you insert a child record with a FOREIGN KEY value that does not exist in the parent table?
+The insert will fail with a **foreign key constraint violation** error, because the value doesn't have a matching reference in the parent table — this is exactly what referential integrity is designed to prevent.
+
+-- 20. Which SQL Constraint is most commonly used to uniquely identify each record in a table, and why?
+The **PRIMARY KEY** constraint is most commonly used, because it:
+- Guarantees uniqueness for every row
+- Disallows NULL values
+- Automatically creates an index, improving lookup performance
+- Serves as the standard reference point for FOREIGN KEY relationships in other tables
+
+This makes it the ideal choice for uniquely and reliably identifying each record.
