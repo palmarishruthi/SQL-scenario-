@@ -1,0 +1,230 @@
+
+
+
+                                      TRIGGERS Interview Questions
+
+SQL Triggers - Interview Questions & Answers
+
+-- 1. What is a Trigger in SQL?
+
+A Trigger is a special type of stored program that automatically executes (fires) when a specified event occurs on a table or view, such as an INSERT, UPDATE, or DELETE operation.
+
+Unlike a stored procedure, you cannot call a trigger manually. It runs automatically when its associated event occurs.
+
+Interview Answer:
+
+A Trigger is a database object that automatically executes when a specified event, such as INSERT, UPDATE, or DELETE, occurs on a table or view.
+
+-- 2. Why do we use Triggers?
+
+Triggers are used to automatically perform actions when data changes.
+
+Common Uses
+1.Maintain audit logs
+2.Validate data
+3.Enforce business rules
+4.Prevent invalid data
+5.Synchronize related tables
+6.Track changes
+7.Automatically update timestamps
+
+Interview Answer:
+
+Triggers are used to automate tasks such as data validation, auditing, enforcing business rules, and maintaining data consistency whenever data is inserted, updated, or deleted.
+
+-- 3. What is the difference between a Trigger and a Stored Procedure?
+Trigger	                                                   Stored Procedure
+Executes automatically	                            Executes only when called
+Triggered by INSERT, UPDATE, DELETE	            Executed using CALL (MySQL) or EXEC (SQL Server)
+Cannot be executed manually	                    Can be executed manually
+Used for automatic actions	                    Used for business logic and reusable operations
+Associated with a table or view                     Independent database object
+
+Interview Answer:
+
+A Trigger executes automatically when a database event occurs, whereas a Stored Procedure runs only when explicitly called by a user or application.
+
+-- 4. What are the different types of Triggers?
+Based on Timing
+BEFORE Trigger
+AFTER Trigger
+
+Based on Events
+INSERT Trigger
+UPDATE Trigger
+DELETE Trigger
+
+Examples:
+
+BEFORE INSERT
+AFTER INSERT
+BEFORE UPDATE
+AFTER UPDATE
+BEFORE DELETE
+AFTER DELETE
+
+Interview Answer:
+
+The main types of triggers are BEFORE and AFTER triggers, which can be defined for INSERT, UPDATE, and DELETE events.
+
+-- 5. What is the difference between BEFORE and AFTER Triggers?
+BEFORE Trigger                               	AFTER Trigger
+Executes before the event	                Executes after the event
+Can validate or modify data before saving	Used after data has been successfully changed
+Can prevent invalid operations           	Commonly used for auditing and logging
+
+Interview Answer:
+
+A BEFORE Trigger runs before the data modification occurs and is typically used for validation, while an AFTER Trigger runs after the operation completes and is often used for logging or auditing.
+
+-- 6. What are OLD and NEW keywords?
+
+In row-level triggers:
+
+OLD → Refers to the existing row before the change.
+NEW → Refers to the new row after the change.
+Example
+CREATE TRIGGER SalaryCheck
+BEFORE UPDATE
+ON Employee
+FOR EACH ROW
+BEGIN
+    IF NEW.Salary < OLD.Salary THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Salary cannot be reduced';
+    END IF;
+END;
+
+Interview Answer:
+
+OLD refers to the previous values of a row, while NEW refers to the new values being inserted or updated.
+
+-- 7. Can we execute a Trigger manually?
+
+No.
+
+Triggers execute automatically when their associated event occurs.
+
+Interview Answer:
+
+No. A trigger cannot be executed manually. It fires automatically when the specified INSERT, UPDATE, or DELETE event occurs.
+
+-- 8. Can a table have multiple Triggers?
+
+Yes.
+
+A table can have multiple triggers for different events (INSERT, UPDATE, DELETE). Depending on the database system, it may also allow multiple triggers for the same event.
+
+Interview Answer:
+
+Yes. A table can have multiple triggers, either for different events or, depending on the database system, multiple triggers for the same event.
+
+-- 9. What happens if a Trigger fails?
+
+If a trigger encounters an error, the associated SQL operation typically fails, and the transaction may be rolled back.
+
+Example:
+
+INSERT fails.
+Trigger raises an error.
+INSERT is rolled back.
+
+Interview Answer:
+
+If a trigger fails, the database usually rolls back the associated transaction to maintain data consistency.
+
+-- 10. How do you drop a Trigger?
+
+Syntax (MySQL):
+
+DROP TRIGGER TriggerName;
+
+Example:
+
+DROP TRIGGER SalaryCheck;
+
+Interview Answer:
+
+Use the DROP TRIGGER statement to permanently remove a trigger from the database.
+
+-- 11. What are the advantages of Triggers?
+Advantages
+Automates repetitive tasks
+Enforces business rules
+Maintains data consistency
+Creates audit logs
+Reduces application code
+Improves data integrity
+
+Interview Answer:
+
+Triggers automate database tasks, enforce business rules, improve data integrity, maintain audit logs, and reduce the need for repetitive application code.
+
+-- 12. What are the disadvantages of Triggers?
+Disadvantages
+Difficult to debug
+Hidden execution can make troubleshooting harder
+Can slow down INSERT, UPDATE, and DELETE operations
+Complex triggers are harder to maintain
+Excessive use may impact performance
+
+Interview Answer:
+
+Triggers can make debugging difficult, reduce performance for data modification operations, and become hard to maintain if they contain complex logic.
+
+-- 13. Where are Triggers used in real-time projects?
+Banking
+Record every transaction in an audit table.
+E-Commerce
+Update inventory automatically after an order.
+Hospital
+Log patient record changes.
+HR
+Record salary updates.
+Finance
+Maintain audit history for compliance.
+Security
+Track login attempts or sensitive data changes.
+
+Interview Answer:
+
+Triggers are commonly used for auditing, logging, inventory updates, enforcing business rules, maintaining data consistency, and tracking changes in banking, e-commerce, healthcare, HR, and finance systems.
+
+-- 14. Can a Trigger prevent invalid data from being inserted?
+
+Yes.
+
+A BEFORE INSERT trigger can validate data and stop the operation by raising an error.
+
+Example
+CREATE TRIGGER CheckSalary
+BEFORE INSERT
+ON Employee
+FOR EACH ROW
+BEGIN
+    IF NEW.Salary < 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Salary cannot be negative';
+    END IF;
+END;
+
+Interview Answer:
+
+Yes. A BEFORE INSERT trigger can validate data and prevent invalid records from being inserted by raising an error.
+
+-- 15. What is FOR EACH ROW in a Trigger?
+
+FOR EACH ROW means the trigger executes once for every row affected by the SQL statement.
+
+Example
+
+If this statement updates 100 rows:
+
+UPDATE Employee
+SET Salary = Salary + 1000;
+
+A trigger defined with FOR EACH ROW runs 100 times—once for each updated row.
+
+Interview Answer:
+
+FOR EACH ROW specifies that the trigger should execute separately for every row affected by an INSERT, UPDATE, or DELETE statement.
