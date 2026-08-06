@@ -1,0 +1,1413 @@
+
+
+
+-- 1. What are Window Functions in SQL?
+
+            Answer:
+
+Window Functions in SQL are functions that perform calculations across a set of rows related to the current row without grouping the rows into a single result. Unlike GROUP BY, window functions return a value for every row while still allowing calculations over a group (window) of rows.
+
+They are commonly used for:
+
+Ranking rows
+Calculating running totals
+Finding previous or next values
+Comparing rows
+Calculating averages, sums, and counts over a partition
+
+Syntax:
+SELECT column_name,
+       window_function() OVER (
+           PARTITION BY column_name
+           ORDER BY column_name
+       ) AS alias_name
+FROM table_name;
+
+Key Components:
+OVER() – Defines the window on which the function operates.
+PARTITION BY – Divides rows into groups (optional).
+ORDER BY – Specifies the order of rows within each partition (optional for some functions).
+
+
+Example Table: Employees
+Emp_ID	Name	Department	Salary
+101	Alice	HR	50000
+102	Bob	HR	60000
+103	Charlie	IT	70000
+104	David	IT	80000
+Example 1: Rank Employees by Salary
+SELECT Name,
+       Department,
+       Salary,
+       RANK() OVER(
+           PARTITION BY Department
+           ORDER BY Salary DESC
+       ) AS Salary_Rank
+FROM Employees;
+
+Output:
+
+Name	Department	Salary	Salary_Rank
+Bob	HR	60000	1
+Alice	HR	50000	2
+David	IT	80000	1
+Charlie	IT	70000	2
+
+
+Example 2: Running Total
+SELECT Name,
+       Salary,
+       SUM(Salary) OVER(ORDER BY Emp_ID) AS Running_Total
+FROM Employees;
+
+
+Common Window Functions
+Function	                  Purpose
+ROW_NUMBER()	                  Assigns a unique row number
+RANK()	                          Assigns ranks with gaps for ties
+DENSE_RANK()	                  Assigns ranks without gaps
+NTILE(n)	                  Divides rows into n groups
+SUM()	                          Running or partitioned sum
+AVG()	                          Running or partitioned average
+COUNT()                        	  Running or partitioned count
+MIN()	                          Minimum value in the window
+MAX()	                          Maximum value in the window
+LAG()	                          Returns the previous row's value
+LEAD()	                          Returns the next row's value
+FIRST_VALUE()	                  Returns the first value in the window
+LAST_VALUE()	                  Returns the last value in the window
+
+
+Difference Between GROUP BY and Window Functions
+GROUP BY	                                                        Window Function
+Returns one row per group	                                        Returns every row
+Combines rows into a single result	                                Keeps all original rows
+Cannot access individual row values after grouping	                Can access both individual row and aggregated values
+Used for summaries	                                                Used for analysis and reporting
+
+Interview Answer (Short)
+
+Window Functions are SQL functions that perform calculations across a set of related rows while retaining each row in the result set. 
+They use the OVER() clause and are commonly used for ranking, running totals, cumulative sums, moving averages, and comparing rows without using GROUP BY.
+
+
+--2. What is the purpose of the OVER() clause in Window Functions?
+
+Answer:
+
+The OVER() clause is the most important part of a Window Function. It defines the window (set of rows) over which the window function performs its calculation.
+
+Without the OVER() clause, functions like RANK(), ROW_NUMBER(), SUM(), AVG(), etc., cannot work as window functions.
+
+Syntax:
+SELECT column_name,
+       window_function() OVER (
+           PARTITION BY column_name
+           ORDER BY column_name
+       ) AS alias_name
+FROM table_name;
+
+Components of OVER()
+
+PARTITION BY (Optional): Divides the result set into groups (partitions). The window function is applied separately to each group.
+ORDER BY (Optional for some functions): Specifies the order of rows within each partition.
+Frame Clause (Optional): Defines a subset of rows within the partition (e.g., current row and previous rows).
+Example Table: Employees
+Emp_ID	Name	Department	Salary
+101	Alice	HR	50000
+102	Bob	HR	60000
+103	Charlie	IT	70000
+104	David	IT	80000
+
+Example 1: Using OVER() with RANK()
+SELECT Name,
+       Department,
+       Salary,
+       RANK() OVER(
+           PARTITION BY Department
+           ORDER BY Salary DESC
+       ) AS Salary_Rank
+FROM Employees;
+
+Output:
+
+Name	Department	Salary	Salary_Rank
+Bob	HR	60000	1
+Alice	HR	50000	2
+David	IT	80000	1
+Charlie	IT	70000	2
+
+Here:
+
+PARTITION BY Department ranks employees within each department.
+ORDER BY Salary DESC ranks them from highest to lowest salary.
+Example 2: Running Total
+SELECT Name,
+       Salary,
+       SUM(Salary) OVER(
+           ORDER BY Emp_ID
+       ) AS Running_Total
+FROM Employees;
+
+Output:
+
+Name	Salary	Running_Total
+Alice	50000	50000
+Bob	60000	110000
+Charlie	70000	180000
+David	80000	260000
+
+Here, OVER(ORDER BY Emp_ID) calculates a cumulative (running) total.
+
+Why is OVER() Important?
+Defines the set of rows for the calculation.
+Allows calculations without grouping rows.
+Retains all rows in the result.
+Enables ranking, running totals, moving averages, and row comparisons.
+
+
+Interview Answer (Short)
+
+The OVER() clause defines the window of rows on which a window function operates. It can use PARTITION BY to divide rows into groups and ORDER BY to specify the calculation order. 
+It allows window functions to perform calculations while preserving every row in the result set.
+
+-- 3. What is the difference between ROW_NUMBER(), RANK(), and DENSE_RANK()?
+
+Answer:
+
+ROW_NUMBER(), RANK(), and DENSE_RANK() are window functions used to assign rankings to rows. The main difference is how they handle duplicate (tied) values
+
+
+| Function       | Handles Ties | Skips Rank Numbers | Unique Number for Every Row |
+| -------------- | ------------ | ------------------ | --------------------------- |
+| `ROW_NUMBER()` | No           | No                 | Yes                         |
+| `RANK()`       | Yes          | Yes                | No                          |
+| `DENSE_RANK()` | Yes          | No                 | No                          |
+
+| Emp_ID | Name    | Salary |
+| ------ | ------- | ------ |
+| 101    | Alice   | 80000  |
+| 102    | Bob     | 70000  |
+| 103    | Charlie | 70000  |
+| 104    | David   | 60000  |
+
+
+1. ROW_NUMBER()
+
+Assigns a unique sequential number to each row, even if two rows have the same value.
+
+Query
+SELECT Name,
+       Salary,
+       ROW_NUMBER() OVER(ORDER BY Salary DESC) AS Row_Num
+FROM Employees;
+Output
+Name	Salary	Row_Num
+Alice	80000	1
+Bob	70000	2
+Charlie	70000	3
+David	60000	4
+
+Key Point: Bob and Charlie have the same salary but receive different row numbers.
+
+2. RANK()
+
+Assigns the same rank to tied values, but skips the next rank(s).
+
+Query
+SELECT Name,
+       Salary,
+       RANK() OVER(ORDER BY Salary DESC) AS Rank_Num
+FROM Employees;
+Output
+Name	Salary	Rank_Num
+Alice	80000	1
+Bob	70000	2
+Charlie	70000	2
+David	60000	4
+
+Key Point: Since Bob and Charlie share Rank 2, Rank 3 is skipped.
+
+3. DENSE_RANK()
+
+Assigns the same rank to tied values, but does not skip any rank numbers.
+
+Query
+SELECT Name,
+       Salary,
+       DENSE_RANK() OVER(ORDER BY Salary DESC) AS Dense_Rank
+FROM Employees;
+Output
+Name	Salary	Dense_Rank
+Alice	80000	1
+Bob	70000	2
+Charlie	70000	2
+David	60000	3
+
+Key Point: After the tie at Rank 2, the next rank is 3 (no gap).
+
+Visual Comparison
+Salary	ROW_NUMBER()	RANK()	DENSE_RANK()
+80000	1	1	1
+70000	2	2	2
+70000	3	2	2
+60000	4	4	3
+When to Use Each Function
+ROW_NUMBER() – When every row must have a unique number (e.g., pagination or removing duplicates).
+RANK() – When ties should receive the same rank and gaps in ranking are acceptable (e.g., sports competitions).
+DENSE_RANK() – When ties should receive the same rank without gaps (e.g., leaderboard rankings).
+Interview Answer (Short)
+
+ROW_NUMBER() assigns a unique sequential number to each row, regardless of duplicate values. RANK() gives the same rank to tied values but skips the next rank(s). DENSE_RANK() also gives the same rank to tied values but does not skip any rank numbers.
+
+
+-- 4. When would you use ROW_NUMBER() instead of RANK()?
+
+Interview one-liner: Use ROW_NUMBER() instead of RANK() when you need a single, uniquely numbered row from an ordered set—such as pagination, deduplication, or selecting one top row per group—because ROW_NUMBER() never assigns the same number to two rows.
+
+Key difference
+
+Situation                                                                Use
+
+Need a unique number for each row                                       ROW_NUMBER()
+
+Tied values should share the same rank                                     RANK()
+
+Common real-world uses of ROW_NUMBER()
+
+Pagination (rows 1–10, 11–20, etc.).
+
+Removing duplicates by keeping only the first row in each group.
+
+Selecting exactly one row per group (latest order per customer, highest salary per department with a deterministic tie-breaker).
+
+Example: Remove duplicates
+
+Suppose Orders has multiple rows for the same customer_id.
+
+WITH ranked AS (
+    SELECT order_id,
+           customer_id,
+           order_date,
+           ROW_NUMBER() OVER (
+               PARTITION BY customer_id
+               ORDER BY order_date DESC, order_id DESC
+           ) AS rn
+        FROM Orders
+)
+SELECT *
+FROM ranked
+WHERE rn = 1;
+
+Why ROW_NUMBER()? If two orders have the same order_date, ROW_NUMBER() still assigns 1 to only one row (using order_id DESC as the tie-breaker). RANK() could assign 1 to multiple rows, so WHERE rank = 1 might return more than one order per customer.
+
+Quick comparison
+
+Salary                           ROW_NUMBER()                       RANK()
+
+80000                                   1                               1
+70000                                   2                               2
+70000                                   3                               2
+60000                                   4                               4
+
+	
+
+-- 5. What happens when duplicate values are present in ROW_NUMBER(), RANK(), and DENSE_RANK()?
+
+
+Answer:
+
+When duplicate (tied) values are present, ROW_NUMBER(), RANK(), and DENSE_RANK() handle them differently.
+
+| Function       | Duplicate Values                    | Rank Skipped? |
+| -------------- | ----------------------------------- | ------------- |
+| `ROW_NUMBER()` | Assigns a unique number to each row | No            |
+| `RANK()`       | Assigns the same rank to duplicates | Yes           |
+| `DENSE_RANK()` | Assigns the same rank to duplicates | No            |
+
+Example Table: Employees
+
+| Emp_ID | Name    | Salary |
+| ------ | ------- | ------ |
+| 101    | Alice   | 80000  |
+| 102    | Bob     | 70000  |
+| 103    | Charlie | 70000  |
+| 104    | David   | 60000  |
+
+1. ROW_NUMBER()
+
+Assigns a different number to every row, even if the values are the same.
+
+Query
+SELECT Name,
+       Salary,
+       ROW_NUMBER() OVER(ORDER BY Salary DESC) AS Row_Num
+FROM Employees;
+
+| Name    | Salary | Row_Num |
+| ------- | ------ | ------- |
+| Alice   | 80000  | 1       |
+| Bob     | 70000  | 2       |
+| Charlie | 70000  | 3       |
+| David   | 60000  | 4       |
+
+Explanation: Bob and Charlie have the same salary, but each gets a different row number.
+
+2. RANK()
+
+Assigns the same rank to duplicate values and skips the next rank(s).
+
+Query
+SELECT Name,
+       Salary,
+       RANK() OVER(ORDER BY Salary DESC) AS Rank_Num
+FROM Employees;
+
+| Name    | Salary | Rank_Num |
+| ------- | ------ | -------- |
+| Alice   | 80000  | 1        |
+| Bob     | 70000  | 2        |
+| Charlie | 70000  | 2        |
+| David   | 60000  | 4        |
+
+
+Explanation: Bob and Charlie share Rank 2, so Rank 3 is skipped.
+
+3. DENSE_RANK()
+
+Assigns the same rank to duplicate values but does not skip any ranks.
+
+Query
+
+SELECT Name,
+       Salary,
+       DENSE_RANK() OVER(ORDER BY Salary DESC) AS Dense_Rank
+FROM Employees;
+
+| Name    | Salary | Dense_Rank |
+| ------- | ------ | ---------- |
+| Alice   | 80000  | 1          |
+| Bob     | 70000  | 2          |
+| Charlie | 70000  | 2          |
+| David   | 60000  | 3          |
+
+
+comparision
+| Salary | `ROW_NUMBER()` | `RANK()` | `DENSE_RANK()` |
+| ------ | -------------- | -------- | -------------- |
+| 80000  | 1              | 1        | 1              |
+| 70000  | 2              | 2        | 2              |
+| 70000  | 3              | 2        | 2              |
+| 60000  | 4              | 4        | 3              |
+
+Interview Answer (Short)
+
+When duplicate values are present:
+
+ROW_NUMBER() assigns a unique sequential number to every row, even for duplicates.
+RANK() gives the same rank to duplicate values but skips the next rank(s).
+DENSE_RANK() gives the same rank to duplicate values without skipping any subsequent ranks.
+
+-- 6. What is the purpose of PARTITION BY in Window Functions?
+
+Answer:
+
+The PARTITION BY clause in a window function is used to divide the result set into separate groups (partitions). The window function is then applied independently to each partition.
+
+Unlike GROUP BY, PARTITION BY does not combine rows. It keeps all rows in the output while performing calculations within each group.
+
+Syntax
+SELECT column_name,
+       window_function() OVER(
+           PARTITION BY column_name
+           ORDER BY column_name
+       ) AS alias_name
+FROM table_name;
+Example Table: Employees
+Emp_ID	Name	Department	Salary
+101	Alice	HR	50000
+102	Bob	HR	60000
+103	Charlie	IT	70000
+104	David	IT	80000
+Example 1: Rank Employees Within Each Department
+SELECT Name,
+       Department,
+       Salary,
+       RANK() OVER(
+           PARTITION BY Department
+           ORDER BY Salary DESC
+       ) AS Salary_Rank
+FROM Employees;
+Output
+Name	Department	Salary	Salary_Rank
+Bob	HR	60000	1
+Alice	HR	50000	2
+David	IT	80000	1
+Charlie	IT	70000	2
+
+Explanation:
+
+PARTITION BY Department creates two partitions: HR and IT.
+Ranking starts from 1 within each department.
+
+Example 2: Calculate Total Salary by Department
+SELECT Name,
+       Department,
+       Salary,
+       SUM(Salary) OVER(
+           PARTITION BY Department
+       ) AS Department_Total
+FROM Employees;
+
+Output
+Name	Department	Salary	Department_Total
+Alice	HR	50000	110000
+Bob	HR	60000	110000
+Charlie	IT	70000	150000
+David	IT	80000	150000
+
+Explanation:
+
+The total salary is calculated within each department.
+Every employee in the same department sees the same department total.
+
+
+PARTITION BY vs GROUP BY
+PARTITION BY	                                    GROUP BY
+Divides rows into partitions                       Groups rows into one result per group
+Keeps all rows in the output	                   Returns one row per group
+Used with window functions	                   Used with aggregate functions
+Performs calculations within each partition	   Summarizes data
+
+
+When to Use PARTITION BY
+
+Use PARTITION BY when you need to:
+
+Rank employees within each department.
+Calculate department-wise totals or averages.
+Find the highest or lowest value within each group.
+Compute running totals separately for each category.
+Compare rows within the same group.
+
+PARTITION BY divides the result set into groups (partitions), and the window function performs its calculation separately within each group while preserving all rows in the output. 
+It is commonly used for department-wise rankings, totals, averages, and other group-based analyses without using GROUP BY.
+
+-- 7. What is the difference between PARTITION BY and GROUP BY?
+
+Answer:
+
+Both PARTITION BY and GROUP BY are used to work with groups of data, but they serve different purposes.
+
+GROUP BY groups rows together and returns one row per group.
+PARTITION BY divides rows into partitions for window functions but keeps every row in the resul
+
+
+| `GROUP BY`                                                  | `PARTITION BY`                                                      |
+| ----------------------------------------------------------- | ------------------------------------------------------------------- |
+| Groups rows into a single result per group                  | Divides rows into partitions while keeping all rows                 |
+| Returns one row for each group                              | Returns all original rows                                           |
+| Used with aggregate functions (`SUM`, `COUNT`, `AVG`, etc.) | Used with window functions (`RANK`, `ROW_NUMBER`, `SUM OVER`, etc.) |
+| Cannot display individual row details after grouping        | Can display both row-level and group-level information              |
+| Reduces the number of rows                                  | Does not reduce the number of rows                                  |
+
+Example Table: Employees
+
+| Emp_ID | Name    | Department | Salary |
+| ------ | ------- | ---------- | ------ |
+| 101    | Alice   | HR         | 50000  |
+| 102    | Bob     | HR         | 60000  |
+| 103    | Charlie | IT         | 70000  |
+| 104    | David   | IT         | 80000  |
+
+Example 1: Using GROUP BY
+
+Find the total salary of each department.
+
+SELECT Department,
+       SUM(Salary) AS Total_Salary
+FROM Employees
+GROUP BY Department;
+Output
+Department	Total_Salary
+HR	110000
+IT	150000
+
+Explanation:
+
+Rows are grouped by department.
+One row is returned for each department.
+Example 2: Using PARTITION BY
+
+Show each employee along with the total salary of their department.
+
+SELECT Name,
+       Department,
+       Salary,
+       SUM(Salary) OVER(PARTITION BY Department) AS Total_Salary
+FROM Employees;
+Output
+Name	Department	Salary	Total_Salary
+Alice	HR	50000	110000
+Bob	HR	60000	110000
+Charlie	IT	70000	150000
+David	IT	80000	150000
+
+Explanation:
+
+Employees are partitioned by department.
+The department total is shown for every employee.
+No rows are removed.
+Visual Comparison
+GROUP BY
+HR → Total Salary = 110000
+IT → Total Salary = 150000
+
+Result: 2 rows (one per department)
+
+PARTITION BY
+Alice   HR   50000   110000
+Bob     HR   60000   110000
+Charlie IT   70000   150000
+David   IT   80000   150000
+
+Result: 4 rows (all employees retained)
+
+When to Use Each
+Use GROUP BY when:
+You need summarized results.
+You want one row per group.
+You are creating reports with totals, counts, or averages.
+
+Use PARTITION BY when:
+You need row-level details along with group calculations.
+You are using window functions.
+You want rankings, running totals, or department-wise calculations while preserving all rows.
+Interview Answer (Short)
+
+GROUP BY groups rows and returns one row per group, making it useful for summaries and aggregations. PARTITION BY divides rows into partitions for window functions while retaining all rows, 
+allowing you to perform calculations like rankings, running totals, and group-wise aggregates without losing row-level details.
+
+
+-- 8. What happens if ORDER BY is not used inside the OVER() clause?
+
+
+Answer:
+
+If ORDER BY is not used inside the OVER() clause, the window function does not have a defined order for processing rows.
+
+For ranking functions like ROW_NUMBER(), RANK(), and DENSE_RANK(), the ORDER BY clause is mandatory. Omitting it results in an error in most SQL databases.
+For aggregate window functions like SUM(), AVG(), COUNT(), MIN(), and MAX(), ORDER BY is optional. Without it, the calculation is performed over the entire partition rather than in a specific order.
+Example Table: Employees
+| Emp_ID | Name    | Department | Salary |
+| ------ | ------- | ---------- | ------ |
+| 101    | Alice   | HR         | 50000  |
+| 102    | Bob     | HR         | 60000  |
+| 103    | Charlie | IT         | 70000  |
+| 104    | David   | IT         | 80000  |
+
+Example 1: Aggregate Function Without ORDER BY
+SELECT Name,
+       Department,
+       Salary,
+       SUM(Salary) OVER(PARTITION BY Department) AS Dept_Total
+FROM Employees;
+
+output:
+| Name    | Department | Salary | Dept_Total |
+| ------- | ---------- | ------ | ---------- |
+| Alice   | HR         | 50000  | 110000     |
+| Bob     | HR         | 60000  | 110000     |
+| Charlie | IT         | 70000  | 150000     |
+| David   | IT         | 80000  | 150000     |
+
+Explanation:
+
+Since there is no ORDER BY, the sum is calculated over the entire department.
+Every employee in the same department gets the same total.
+Example 2: Aggregate Function With ORDER BY
+SELECT Name,
+       Department,
+       Salary,
+       SUM(Salary) OVER(
+           PARTITION BY Department
+           ORDER BY Salary
+       ) AS Running_Total
+FROM Employees;
+
+output:
+| Name    | Department | Salary | Running_Total |
+| ------- | ---------- | ------ | ------------- |
+| Alice   | HR         | 50000  | 50000         |
+| Bob     | HR         | 60000  | 110000        |
+| Charlie | IT         | 70000  | 70000         |
+| David   | IT         | 80000  | 150000        |
+
+Explanation:
+
+ORDER BY Salary causes SUM() to produce a running total within each department.
+Example 3: ROW_NUMBER() Without ORDER BY
+SELECT Name,
+       ROW_NUMBER() OVER() AS Row_Num
+FROM Employees;
+
+Result:
+
+In SQL Server, this query returns an error because ROW_NUMBER() requires an ORDER BY clause inside OVER().
+Similarly, RANK() and DENSE_RANK() also require ORDER BY.
+Summary
+Window Function                                 	ORDER BY Required?	Without ORDER BY
+ROW_NUMBER()	                                                   ✅ Yes	Error
+RANK()	                                                           ✅ Yes	Error
+DENSE_RANK()	                                                   ✅ Yes	Error
+SUM()	                                                           ❌ No  	Returns total for each partition
+AVG()	                                                           ❌ No 	Returns average for each partition
+COUNT()	                                                           ❌ No  	Returns count for each partition
+MIN() / MAX()	                                                   ❌ No 	Returns min/max for each partition
+
+Interview Answer (Short)
+
+If ORDER BY is not used inside the OVER() clause, ranking functions such as ROW_NUMBER(), RANK(), and DENSE_RANK() cannot determine the order of rows and typically return an error. For aggregate window functions like SUM() and AVG(), ORDER BY is optional; without it, the calculation is performed over the entire partition instead of as a running calculation.
+
+-- 9. Can we use multiple columns in PARTITION BY? Explain with an example.
+
+Answer:
+
+Yes. We can use multiple columns in the PARTITION BY clause.
+
+When multiple columns are specified, SQL creates a separate partition for each unique combination of those column values. The window function is then applied independently within each partition.
+
+SYNTAX:
+SELECT column1,
+       column2,
+       window_function() OVER(
+           PARTITION BY column1, column2
+           ORDER BY column3
+       ) AS alias_name
+FROM table_name;
+
+Example Table: Employees
+
+| Emp_ID | Name  | Department | Job_Role  | Salary |
+| ------ | ----- | ---------- | --------- | ------ |
+| 101    | Alice | HR         | Manager   | 70000  |
+| 102    | Bob   | HR         | Executive | 50000  |
+| 103    | Carol | HR         | Executive | 55000  |
+| 104    | David | IT         | Manager   | 90000  |
+| 105    | Emma  | IT         | Developer | 80000  |
+| 106    | Frank | IT         | Developer | 75000  |
+
+Example: Rank Employees by Salary Within Department and Job Role
+SELECT Name,
+       Department,
+       Job_Role,
+       Salary,
+       RANK() OVER(
+           PARTITION BY Department, Job_Role
+           ORDER BY Salary DESC
+       ) AS Salary_Rank
+FROM Employees;
+
+OUTPUT:
+| Name  | Department | Job_Role  | Salary | Salary_Rank |
+| ----- | ---------- | --------- | ------ | ----------- |
+| Alice | HR         | Manager   | 70000  | 1           |
+| Carol | HR         | Executive | 55000  | 1           |
+| Bob   | HR         | Executive | 50000  | 2           |
+| David | IT         | Manager   | 90000  | 1           |
+| Emma  | IT         | Developer | 80000  | 1           |
+| Frank | IT         | Developer | 75000  | 2           |
+
+Explanation
+
+The data is divided into these partitions:
+
+HR + Manager
+Alice → Rank 1
+HR + Executive
+Carol → Rank 1
+Bob → Rank 2
+IT + Manager
+David → Rank 1
+IT + Developer
+Emma → Rank 1
+Frank → Rank 2
+
+Each unique combination of Department and Job_Role forms a separate partition, and ranking starts from 1 within each partition.
+
+Yes. PARTITION BY can include multiple columns. SQL creates a separate partition for each unique combination of those columns, and the window function is applied independently within each partition. For example, PARTITION BY Department, Job_Role ranks employees separately for each job role within each department.
+
+
+-- 10. Can we use multiple columns in ORDER BY inside a Window Function? Explain how SQL sorts the data.
+
+Answer:
+
+Yes. We can use multiple columns in the ORDER BY clause inside a window function.
+
+SQL sorts the data from left to right based on the columns specified:
+
+It first sorts by the first column.
+If two or more rows have the same value in the first column, it sorts those rows by the second column.
+If there is still a tie, it sorts by the third column, and so on.
+
+This provides a deterministic order for window functions such as ROW_NUMBER(), RANK(), DENSE_RANK(), LAG(), and LEAD().
+
+Syntax
+SELECT column1,
+       column2,
+       window_function() OVER(
+           PARTITION BY column_name
+           ORDER BY column1 ASC, column2 DESC
+       ) AS alias_name
+FROM table_name;
+
+Example Table: Employees
+| Emp_ID | Name    | Department | Salary | Hire_Date  |
+| ------ | ------- | ---------- | ------ | ---------- |
+| 101    | Alice   | HR         | 60000  | 2021-01-10 |
+| 102    | Bob     | HR         | 60000  | 2022-05-15 |
+| 103    | Charlie | HR         | 50000  | 2023-03-20 |
+| 104    | David   | IT         | 80000  | 2020-07-12 |
+| 105    | Emma    | IT         | 80000  | 2021-09-18 |
+
+Example: ROW_NUMBER() with Multiple ORDER BY Columns
+SELECT Name,
+       Department,
+       Salary,
+       Hire_Date,
+       ROW_NUMBER() OVER(
+           PARTITION BY Department
+           ORDER BY Salary DESC, Hire_Date ASC
+       ) AS Row_Num
+FROM Employees;
+
+OUTPUT
+| Name    | Department | Salary | Hire_Date  | Row_Num |
+| ------- | ---------- | ------ | ---------- | ------- |
+| Alice   | HR         | 60000  | 2021-01-10 | 1       |
+| Bob     | HR         | 60000  | 2022-05-15 | 2       |
+| Charlie | HR         | 50000  | 2023-03-20 | 3       |
+| David   | IT         | 80000  | 2020-07-12 | 1       |
+| Emma    | IT         | 80000  | 2021-09-18 | 2       |
+
+
+How SQL Sorts the Data
+
+The clause:
+
+ORDER BY Salary DESC, Hire_Date ASC
+
+means:
+
+Sort employees by Salary in descending order (highest salary first).
+If two employees have the same salary, sort them by Hire_Date in ascending order (earliest hire date first).
+
+For the HR department:
+| Name    | Salary | Hire_Date  |
+| ------- | ------ | ---------- |
+| Alice   | 60000  | 2021-01-10 |
+| Bob     | 60000  | 2022-05-15 |
+| Charlie | 50000  | 2023-03-20 |
+
+Alice and Bob have the same salary.
+SQL compares their hire dates.
+Alice was hired earlier, so she receives ROW_NUMBER = 1.
+Another Example: Ranking by Salary and Name
+SELECT Name,
+       Salary,
+       RANK() OVER(
+           ORDER BY Salary DESC, Name ASC
+       ) AS Salary_Rank
+FROM Employees;
+
+Here:
+
+Employees are ranked by highest salary.
+If salaries are equal, names are sorted alphabetically.
+When to Use Multiple Columns in ORDER BY
+
+Use multiple columns when:
+
+-The primary sorting column contains duplicate values.
+-You want a consistent and predictable order.
+-You need to break ties for functions like ROW_NUMBER().
+-You want meaningful rankings based on multiple criteria.
+
+Interview Answer (Short)
+
+Yes. We can use multiple columns in the ORDER BY clause inside a window function. SQL sorts the data from left to right—first by the first column, then uses the second column to break ties, followed by additional columns if needed. This ensures a consistent and deterministic order for window function calculations.
+
+
+--11. How does SQL execute a query when both PARTITION BY and ORDER BY are used together?
+
+Answer:
+
+When both PARTITION BY and ORDER BY are used inside the OVER() clause, SQL executes the window function in the following order:
+
+Partitions the data based on the PARTITION BY columns.
+Sorts the rows within each partition according to the ORDER BY clause.
+Applies the window function (such as ROW_NUMBER(), RANK(), SUM(), etc.) to each sorted partition.
+Returns all rows with the calculated window function values.
+
+Note: PARTITION BY determines which rows belong together, while ORDER BY determines the sequence in which the function is applied within each partition.
+
+Syntax
+SELECT column1,
+       column2,
+       window_function() OVER(
+           PARTITION BY column1
+           ORDER BY column2
+       ) AS alias_name
+FROM table_name;
+Example Table: Employees
+| Emp_ID | Name    | Department | Salary |
+| ------ | ------- | ---------- | ------ |
+| 101    | Alice   | HR         | 50000  |
+| 102    | Bob     | HR         | 60000  |
+| 103    | Charlie | IT         | 70000  |
+| 104    | David   | IT         | 80000  |
+| 105    | Emma    | IT         | 75000  |
+
+Step-by-Step Execution
+Step 1: Partition the Data
+
+PARTITION BY Department
+
+SQL creates two partitions:
+
+HR
+
+Name	Salary
+Alice	50000
+Bob	60000
+
+IT
+
+Name	Salary
+Charlie	70000
+David	80000
+Emma	75000
+Step 2: Sort Each Partition
+
+ORDER BY Salary DESC
+
+HR
+
+Name	Salary
+Bob	60000
+Alice	50000
+
+IT
+
+Name	Salary
+David	80000
+Emma	75000
+Charlie	70000
+Step 3: Apply the Window Function
+
+RANK() is calculated separately within each sorted partition.
+
+HR
+
+Name	Salary	Rank
+Bob	60000	1
+Alice	50000	2
+
+IT
+
+Name	Salary	Rank
+David	80000	1
+Emma	75000	2
+Charlie	70000	3
+Step 4: Return the Final Result
+
+All rows are returned with the calculated ranks.
+
+Another Example: Running Total
+SELECT Name,
+       Department,
+       Salary,
+       SUM(Salary) OVER(
+           PARTITION BY Department
+           ORDER BY Salary
+       ) AS Running_Total
+FROM Employees;
+Output
+Name	Department	Salary	Running_Total
+Alice	HR	50000	50000
+Bob	HR	60000	110000
+Charlie	IT	70000	70000
+Emma	IT	75000	145000
+David	IT	80000	225000
+
+Explanation:
+
+Employees are first grouped by department.
+Within each department, they are sorted by salary.
+The running total is calculated in that sorted order.
+Execution Flow
+Original Table
+       │
+       ▼
+PARTITION BY Department
+       │
+       ▼
+Create Separate Partitions
+       │
+       ▼
+ORDER BY Salary DESC
+       │
+       ▼
+Sort Rows Within Each Partition
+       │
+       ▼
+Apply Window Function
+       │
+       ▼
+Return All Rows with Results
+Key Points
+PARTITION BY divides the data into groups.
+ORDER BY sorts rows within each group.
+The window function is applied independently to each sorted partition.
+All original rows remain in the output.
+Each partition starts its own calculation (ranking, running total, etc.).
+Interview Answer (Short)
+
+When both PARTITION BY and ORDER BY are used in a window function, SQL first divides the data into partitions using PARTITION BY. It then sorts the rows within each partition using ORDER BY, 
+
+applies the window function to the sorted rows, and finally returns all rows with the calculated values. This allows calculations such as rankings and running totals to be performed independently within each partition.
+
+-- 12. Write a query to find the highest-paid employee in each department using ROW_NUMBER().
+
+Answer:
+
+To find the highest-paid employee in each department, use the ROW_NUMBER() window function with:
+
+PARTITION BY Department → Creates separate groups for each department.
+ORDER BY Salary DESC → Sorts employees by salary from highest to lowest.
+WHERE Row_Num = 1 → Returns only the highest-paid employee from each department.
+Query
+SELECT Emp_ID,
+       Name,
+       Department,
+       Salary
+FROM (
+    SELECT Emp_ID,
+           Name,
+           Department,
+           Salary,
+           ROW_NUMBER() OVER(
+               PARTITION BY Department
+               ORDER BY Salary DESC
+           ) AS Row_Num
+    FROM Employees
+) AS RankedEmployees
+WHERE Row_Num = 1;
+Example Table: Employees
+Emp_ID	Name	Department	Salary
+101	Alice	HR	50000
+102	Bob	HR	60000
+103	Charlie	IT	70000
+104	David	IT	80000
+105	Emma	Finance	90000
+106	Frank	Finance	85000
+Output
+Emp_ID	Name	Department	Salary
+102	Bob	HR	60000
+104	David	IT	80000
+105	Emma	Finance	90000
+Explanation
+Step 1: Partition the data
+PARTITION BY Department
+
+Creates separate groups:
+
+HR
+IT
+Finance
+Step 2: Sort each department
+ORDER BY Salary DESC
+
+Employees are sorted from the highest salary to the lowest within each department.
+
+Step 3: Assign row numbers
+
+ROW_NUMBER() assigns:
+
+Department	Name	Salary	Row_Num
+HR	Bob	60000	1
+HR	Alice	50000	2
+IT	David	80000	1
+IT	Charlie	70000	2
+Finance	Emma	90000	1
+Finance	Frank	85000	2
+Step 4: Filter the result
+WHERE Row_Num = 1
+
+Returns only the first (highest-paid) employee from each department.
+
+Note
+
+If multiple employees have the same highest salary in a department:
+
+ROW_NUMBER() returns only one of them.
+To return all employees tied for the highest salary, use RANK() or DENSE_RANK() instead.
+Interview Answer (Short)
+
+To find the highest-paid employee in each department, use ROW_NUMBER() with PARTITION BY Department and ORDER BY Salary DESC. Then filter for ROW_NUMBER() = 1 to return the top-paid employee from each department.
+
+-- 13. Write a query to find the second highest salary in each department using a Window Function.
+
+Answer:
+
+To find the second highest salary in each department, use the DENSE_RANK() (or RANK()) window function.
+
+PARTITION BY Department → Divides employees into departments.
+ORDER BY Salary DESC → Sorts salaries from highest to lowest.
+WHERE Salary_Rank = 2 → Returns employees with the second highest salary in each department.
+
+Why DENSE_RANK()?
+If multiple employees have the same second highest salary, DENSE_RANK() returns all of them.
+
+Query using DENSE_RANK() (Recommended)
+SELECT Emp_ID,
+       Name,
+       Department,
+       Salary
+FROM (
+    SELECT Emp_ID,
+           Name,
+           Department,
+           Salary,
+           DENSE_RANK() OVER(
+               PARTITION BY Department
+               ORDER BY Salary DESC
+           ) AS Salary_Rank
+    FROM Employees
+) AS RankedEmployees
+WHERE Salary_Rank = 2;
+Example Table: Employees
+Emp_ID	Name	Department	Salary
+101	Alice	HR	70000
+102	Bob	HR	60000
+103	Charlie	HR	60000
+104	David	IT	90000
+105	Emma	IT	80000
+106	Frank	IT	70000
+Output
+Emp_ID	Name	Department	Salary
+102	Bob	HR	60000
+103	Charlie	HR	60000
+105	Emma	IT	80000
+
+Explanation:
+
+In the HR department:
+70000 → Rank 1
+60000 → Rank 2 (Bob and Charlie)
+In the IT department:
+90000 → Rank 1
+80000 → Rank 2 (Emma)
+Using ROW_NUMBER() (Returns Only One Employee)
+
+If you need only one employee with the second highest salary from each department, use ROW_NUMBER():
+
+SELECT Emp_ID,
+       Name,
+       Department,
+       Salary
+FROM (
+    SELECT Emp_ID,
+           Name,
+           Department,
+           Salary,
+           ROW_NUMBER() OVER(
+               PARTITION BY Department
+               ORDER BY Salary DESC
+           ) AS Row_Num
+    FROM Employees
+) AS RankedEmployees
+WHERE Row_Num = 2;
+
+Note: If multiple employees have the same second highest salary, this query returns only one of them.
+
+ROW_NUMBER() vs DENSE_RANK()
+Function	Handles Salary Ties	Returns All Employees with 2nd Highest Salary
+ROW_NUMBER()	❌ No	                    ❌ No
+DENSE_RANK()	✅ Yes	                    ✅ Yes
+
+Interview Answer (Short)
+
+To find the second highest salary in each department, use DENSE_RANK() with PARTITION BY Department and ORDER BY Salary DESC, then filter the results where DENSE_RANK() = 2. This correctly returns all employees who share the second highest salary in each department.
+
+-- 14. Which ranking function should you use if you do not want skipped ranks, and why?
+
+Answer:
+
+If you do not want skipped ranks, you should use DENSE_RANK().
+
+DENSE_RANK() assigns the same rank to duplicate (tied) values, but does not skip the next rank. This ensures that the ranking sequence remains continuous.
+
+Example Table: Employees
+Emp_ID	Name	Salary
+101	Alice	80000
+102	Bob	70000
+103	Charlie	70000
+104	David	60000
+Using DENSE_RANK()
+SELECT Name,
+       Salary,
+       DENSE_RANK() OVER(ORDER BY Salary DESC) AS Dense_Rank
+FROM Employees;
+Output
+Name	Salary	Dense_Rank
+Alice	80000	1
+Bob	70000	2
+Charlie	70000	2
+David	60000	3
+
+Explanation:
+
+Bob and Charlie have the same salary, so both receive Rank 2.
+The next rank is 3, not 4.
+Therefore, there are no skipped ranks.
+Comparison with RANK()
+SELECT Name,
+       Salary,
+       RANK() OVER(ORDER BY Salary DESC) AS Rank_Num
+FROM Employees;
+Output
+Name	Salary	Rank_Num
+Alice	80000	1
+Bob	70000	2
+Charlie	70000	2
+David	60000	4
+
+Explanation:
+
+Bob and Charlie share Rank 2.
+Since two employees occupy Rank 2, Rank 3 is skipped, and David gets Rank 4.
+DENSE_RANK() vs RANK()
+Function	Same Rank for Ties	Skips Ranks?
+RANK()	                   ✅ Yes	✅ Yes
+DENSE_RANK()	           ✅ Yes	❌ No
+When to Use DENSE_RANK()
+
+Use DENSE_RANK() when:
+
+You need continuous ranking without gaps.
+You want to find the 2nd, 3rd, or Nth highest salary.
+You are creating leaderboards where rank numbers should not be skipped.
+Interview Answer (Short)
+
+If you do not want skipped ranks, use DENSE_RANK(). It assigns the same rank to duplicate values and continues with the next consecutive rank, unlike RANK(), which skips rank numbers after ties.
+
+
+-- 15. What are the common real-time use cases of ROW_NUMBER(), RANK(), and DENSE_RANK() in ETL, Data Engineering, and Reporting?
+
+Answer
+
+ROW_NUMBER(), RANK(), and DENSE_RANK() are among the most commonly used window functions in ETL pipelines, data engineering, data warehousing, and BI/reporting. They help in deduplication, ranking, Top-N analysis, and data validation.
+
+1. ROW_NUMBER() – Common Real-Time Use Cases
+a) Remove Duplicate Records (ETL)
+
+During data loading, source systems may contain duplicate records.
+
+SELECT *
+FROM (
+    SELECT *,
+           ROW_NUMBER() OVER(
+               PARTITION BY Customer_ID
+               ORDER BY Updated_Date DESC
+           ) AS rn
+    FROM Customers
+) t
+WHERE rn = 1;
+
+Use Case:
+
+Keep only the latest customer record.
+Remove duplicate records before loading into the data warehouse.
+b) Get the Latest Record per Customer
+ROW_NUMBER() OVER(
+    PARTITION BY Customer_ID
+    ORDER BY Order_Date DESC
+)
+
+Use Case:
+
+Latest order
+Latest login
+Latest employee salary
+Latest product price
+c) Pagination in Applications
+ROW_NUMBER() OVER(ORDER BY Employee_ID)
+
+Use Case:
+
+Display records 1–10, 11–20, etc.
+Used in web applications and reporting tools.
+d) Incremental Data Loads
+
+Identify the latest version of a record before loading into a warehouse.
+
+2. RANK() – Common Real-Time Use Cases
+a) Sales Ranking
+
+Rank salespeople based on total sales.
+
+RANK() OVER(
+    ORDER BY Total_Sales DESC
+)
+
+Example:
+
+Salesperson	Sales	Rank
+John	500000	1
+Mary	450000	2
+David	450000	2
+Lisa	400000	4
+b) Student Ranking
+
+Rank students based on marks.
+
+Students with the same marks receive the same rank.
+
+c) Employee Performance Reports
+
+Rank employees based on performance scores.
+
+d) Competition Results
+
+Sports tournaments and contests where ties share the same rank and subsequent ranks are skipped.
+
+3. DENSE_RANK() – Common Real-Time Use Cases
+a) Top N Salaries
+
+Find the second or third highest salary.
+
+DENSE_RANK() OVER(
+    ORDER BY Salary DESC
+)
+b) Product Leaderboards
+
+Rank products based on sales without skipping rank numbers.
+
+c) Customer Segmentation
+
+Rank customers by purchase amount.
+
+d) Regional Sales Rankings
+
+Find the top-performing branches within each region.
+
+4. Top-N Analysis
+
+Find the top 3 employees in every department.
+
+SELECT *
+FROM (
+    SELECT *,
+           DENSE_RANK() OVER(
+               PARTITION BY Department
+               ORDER BY Salary DESC
+           ) AS rnk
+    FROM Employees
+) t
+WHERE rnk <= 3;
+
+Use Cases
+
+Top customers
+Top-selling products
+Top-performing employees
+5. Slowly Changing Dimension (SCD Type 2)
+
+Choose the latest record for each business key.
+
+ROW_NUMBER() OVER(
+    PARTITION BY Customer_ID
+    ORDER BY Effective_Date DESC
+)
+
+Used in:
+
+Data Warehouses
+ETL pipelines
+Azure Data Factory
+Informatica
+SSIS
+6. Data Quality Checks
+
+Identify duplicate records.
+
+ROW_NUMBER() OVER(
+    PARTITION BY Email
+    ORDER BY Customer_ID
+)
+
+If ROW_NUMBER() > 1, the record is a duplicate.
+
+7. Change Data Capture (CDC)
+
+Find the latest version of records received from source systems.
+
+8. BI & Reporting Dashboards
+
+Used in:
+
+Power BI
+Tableau
+SSRS
+Looker
+
+Examples:
+
+Top 10 products
+Top 5 customers
+Highest revenue by region
+Monthly rankings
+Department-wise employee rankings
+9. Banking & Finance
+
+Examples:
+
+Top account holders
+Highest transactions
+Highest loan amounts
+Customer risk rankings
+10. E-Commerce
+
+Examples:
+
+Top-selling products
+Most valuable customers
+Highest-rated products
+Latest product price
+Best-performing categories
+11. Healthcare
+
+Examples:
+
+Latest patient visit
+Highest billing patients
+Department-wise doctor rankings
+12. HR Analytics
+
+Examples:
+
+Highest-paid employees
+Latest employee record
+Performance rankings
+Department-wise salary rankings
+Summary Table
+Function	        Real-Time Use Cases
+ROW_NUMBER()	        Remove duplicates, latest record per group, pagination, incremental loads, SCD Type 2, CDC
+RANK()	                Sales rankings, employee rankings, student rankings, competition results where skipped ranks are acceptable
+DENSE_RANK()          	Top-N analysis, second/third highest salary, leaderboards, product and customer rankings without skipped ranks
+
+Interview Answer (Short)
+
+ROW_NUMBER(), RANK(), and DENSE_RANK() are widely used in ETL, data engineering, and reporting. ROW_NUMBER() is mainly used for deduplication, selecting the latest record, pagination, and Slowly Changing Dimension (SCD) processing. RANK() is used for ranking reports where ties are allowed and skipped ranks are acceptable, such as sales or competition rankings. DENSE_RANK() is used for Top-N analysis, leaderboards, and finding the second or third highest values because it does not skip ranks after ties. These functions are commonly used in SQL Server, Oracle, PostgreSQL, MySQL 8+, Power BI, Tableau, SSIS, Azure Data Factory, and modern data warehouse solutions.
+
