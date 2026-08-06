@@ -1,0 +1,251 @@
+
+
+
+                                      INDEXING Interview Questions
+
+-- 1. What is an Index in SQL?
+
+An Index is a database object that improves the speed of data retrieval by creating a separate structure that stores column values along with pointers to the actual rows in a table.
+
+Think of it like the index in a book—instead of reading every page, you use the index to quickly find the required topic.
+
+Interview Answer:
+
+An Index is a database object that improves query performance by allowing SQL to find rows quickly without scanning the entire table.
+
+-- 2. Why is an Index used?
+
+Indexes are used to improve the performance of SELECT queries.
+
+Benefits
+Faster data retrieval
+Reduces search time
+Improves JOIN performance
+Improves sorting (ORDER BY)
+Improves filtering (WHERE)
+Improves grouping (GROUP BY)
+
+Example:
+
+Without Index:
+
+SELECT * FROM Employee
+WHERE Emp_ID = 101;
+
+SQL checks every row.
+
+With Index:
+
+SQL directly jumps to the required row.
+
+Interview Answer:
+
+Indexes are used to speed up data retrieval and improve the performance of SELECT, JOIN, WHERE, ORDER BY, and GROUP BY operations.
+
+-- 3. What is a Full Table Scan?
+
+A Full Table Scan occurs when SQL reads every row in a table to find the required data.
+
+Example:
+
+SELECT *
+FROM Employee
+WHERE Department = 'HR';
+
+If no index exists on Department, SQL scans every row.
+
+Interview Answer:
+
+A Full Table Scan means the database reads every row of a table because it cannot use an index to locate the required data.
+
+-- 4. What is an Index Scan?
+
+An Index Scan occurs when the database uses an index to search for data instead of scanning the entire table.
+
+Example:
+
+CREATE INDEX idx_department
+ON Employee(Department);
+
+Now,
+
+SELECT *
+FROM Employee
+WHERE Department = 'HR';
+
+uses the index.
+
+Interview Answer:
+
+An Index Scan means the database uses an index to locate matching rows, which is usually faster than a full table scan.
+
+-- 5. What are the different types of indexes?
+
+Common SQL indexes include:
+
+Primary Index (created for a Primary Key)
+Clustered Index
+Non-Clustered Index
+Unique Index
+Composite (Multi-column) Index
+Full-Text Index
+Spatial Index (for geographic data)
+
+Interview Answer:
+
+The common types of indexes are Clustered, Non-Clustered, Unique, Composite, Full-Text, and Spatial indexes. A Primary Key also creates an index automatically in many databases.
+
+-- 6. What is the difference between Clustered and Non-Clustered Index?
+Clustered Index	                               Non-Clustered Index
+Sorts the actual table data       	Separate structure from the table
+Only one per table	                Multiple allowed per table
+Faster for range queries        	Faster for specific lookups
+Table rows are stored in index order	Contains pointers to table rows
+
+Interview Answer:
+
+A Clustered Index determines the physical order of data in a table, whereas a Non-Clustered Index stores index entries separately with pointers to the actual data.
+
+-- 7. What is a Composite Index?
+
+A Composite Index is an index created on multiple columns.
+
+Example:
+
+CREATE INDEX idx_emp
+ON Employee(Department, Salary);
+
+Useful for queries like:
+
+SELECT *
+FROM Employee
+WHERE Department = 'HR'
+AND Salary > 50000;
+
+Interview Answer:
+
+A Composite Index is an index on two or more columns and is useful for queries that filter or sort using those columns together.
+
+-- 8. What is a Unique Index?
+
+A Unique Index ensures that all values in the indexed column are unique.
+
+Example:
+
+CREATE UNIQUE INDEX idx_email
+ON Employee(Email);
+
+Duplicate emails are not allowed.
+
+Interview Answer:
+
+A Unique Index prevents duplicate values in the indexed column while also improving query performance.
+
+-- 9. What are the advantages and disadvantages of indexing?
+
+Advantages
+Faster SELECT queries
+Faster JOIN operations
+Faster sorting and grouping
+Reduces full table scans
+
+Disadvantages
+Uses extra storage space
+Slows INSERT operations
+Slows UPDATE operations
+Slows DELETE operations
+Requires maintenance
+
+Interview Answer:
+
+Indexes improve read performance but increase storage usage and can slow down INSERT, UPDATE, and DELETE operations because the indexes must also be updated.
+
+-- 10. Can multiple indexes be created on the same table?
+
+Yes.
+
+Example:
+
+CREATE INDEX idx_name
+ON Employee(Emp_Name);
+
+CREATE INDEX idx_salary
+ON Employee(Salary);
+
+CREATE INDEX idx_dept_salary
+ON Employee(Department, Salary);
+
+Interview Answer:
+
+Yes. A table can have multiple indexes on different columns or combinations of columns.
+
+-- 11. What happens if too many indexes are created?
+
+Problems include:
+
+Increased storage usage
+Slower INSERT operations
+Slower UPDATE operations
+Slower DELETE operations
+Higher index maintenance overhead
+The optimizer has more indexes to evaluate, which may not improve performance
+
+Interview Answer:
+
+Creating too many indexes can waste storage and reduce the performance of data modification operations because every index must be maintained.
+
+-- 12. When should you create an index?
+
+Create indexes on columns that:
+
+Are frequently used in WHERE clauses
+Are used in JOIN conditions
+Are used in ORDER BY
+Are used in GROUP BY
+Have high selectivity (many distinct values)
+Are searched frequently
+
+Interview Answer:
+
+Create indexes on columns that are frequently searched, joined, sorted, or grouped to improve query performance.
+
+-- 13. When should you avoid creating an index?
+
+Avoid indexes on:
+
+Small tables
+Columns that change frequently
+Columns with very few distinct values (e.g., Gender with only 'M' and 'F')
+Tables with many INSERT, UPDATE, and DELETE operations
+Columns rarely used in queries
+
+Interview Answer:
+
+Avoid indexes on small tables, low-selectivity columns, frequently updated columns, or columns rarely used in searches.
+
+-- 14. How do indexes affect INSERT, UPDATE, and DELETE operations?
+
+Whenever data changes, the database must update the corresponding indexes.
+
+INSERT
+Adds the new row.
+Updates all relevant indexes.
+UPDATE
+If an indexed column changes, the index must be updated.
+DELETE
+Removes the row.
+Removes related index entries.
+
+Interview Answer:
+
+Indexes speed up data retrieval but slow down INSERT, UPDATE, and DELETE operations because the database must keep the indexes synchronized with the table data.
+
+-- 15. Which index is created automatically on a PRIMARY KEY in MySQL InnoDB?
+
+In MySQL InnoDB, the PRIMARY KEY automatically creates a Clustered Index.
+
+If no PRIMARY KEY is defined, InnoDB attempts to use a suitable unique, non-null index. If none exists, it creates a hidden row ID.
+
+Interview Answer:
+
+In MySQL InnoDB, a PRIMARY KEY automatically creates a Clustered Index, and the table data is stored in the order of the primary key.
