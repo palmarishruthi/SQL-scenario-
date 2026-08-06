@@ -1,0 +1,1386 @@
+
+            
+                           SQL Interview Questions (CTE, Temporary Table & Views)
+
+
+-- 1. What is a Common Table Expression (CTE) in SQL?
+
+A Common Table Expression (CTE) is a temporary named result set that you define using the WITH keyword. It exists only for the duration of a single SQL statement and helps make complex queries easier to read, write, and maintain.
+
+Syntax
+WITH CTE_Name AS (
+    SELECT column1, column2
+    FROM table_name
+    WHERE condition
+)
+SELECT *
+FROM CTE_Name;
+
+Example
+
+Suppose you have an Employee table:
+
+| Emp_ID | Emp_Name | Department | Salary |
+| -----: | -------- | ---------- | -----: |
+|    101 | Alice    | HR         |  50000 |
+|    102 | Bob      | IT         |  70000 |
+|    103 | Charlie  | HR         |  60000 |
+|    104 | David    | IT         |  80000 |
+
+Query: Display employees with a salary greater than 60,000 using a CTE.
+
+WITH HighSalaryEmployees AS (
+    SELECT Emp_ID, Emp_Name, Department, Salary
+    FROM Employee
+    WHERE Salary > 60000
+)
+SELECT *
+FROM HighSalaryEmployees;
+
+Output
+| Emp_ID | Emp_Name | Department | Salary |
+| -----: | -------- | ---------- | -----: |
+|    102 | Bob      | IT         |  70000 |
+|    104 | David    | IT         |  80000 |
+
+Advantages of CTEs
+Improves query readability.
+Breaks complex queries into smaller, logical parts.
+Avoids repeating the same subquery multiple times.
+Makes SQL easier to debug and maintain.
+Supports recursive queries (such as employee-manager hierarchies).
+
+CTE vs Subquery
+| CTE                                                | Subquery                                    |
+| -------------------------------------------------- | ------------------------------------------- |
+| Defined using `WITH`                               | Written inside `SELECT`, `FROM`, or `WHERE` |
+| More readable for complex queries                  | Can become difficult to read when nested    |
+| Can be referenced multiple times in the same query | Usually repeated if needed multiple times   |
+| Supports recursion                                 | Does not support recursion                  |
+
+Interview Answer (Short)
+
+A Common Table Expression (CTE) is a temporary named result set created using the WITH clause. 
+It exists only during the execution of a single SQL statement and is used to simplify complex queries, improve readability, eliminate repeated subqueries, and support recursive operations.
+
+--2. What is a Temporary Table?
+
+A Temporary Table is a table that is created to store data temporarily during a database session or transaction. It behaves like a regular table, but it is automatically removed when the session ends (or when explicitly dropped, depending on the database).
+
+Syntax (SQL Server)
+Local Temporary Table
+CREATE TABLE #EmployeeTemp (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100),
+    Salary DECIMAL(10,2)
+);
+
+Global Temporary Table
+CREATE TABLE ##EmployeeTemp (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100),
+    Salary DECIMAL(10,2)
+);
+# → Local Temporary Table (visible only to the current session)
+## → Global Temporary Table (visible to all sessions until no session is using it)
+Example
+
+Create a temporary table:
+
+CREATE TABLE #HighSalaryEmployees (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100),
+    Salary DECIMAL(10,2)
+);
+
+Insert data into the temporary table:
+
+INSERT INTO #HighSalaryEmployees
+SELECT Emp_ID, Emp_Name, Salary
+FROM Employee
+WHERE Salary > 60000;
+
+Retrieve the data:
+
+SELECT *
+FROM #HighSalaryEmployees;
+
+Drop the temporary table (optional):
+
+DROP TABLE #HighSalaryEmployees;
+
+
+Advantages of Temporary Tables
+- Store intermediate query results.
+- Improve performance by avoiding repeated calculations.
+- Simplify complex SQL queries.
+- Useful in stored procedures and ETL processes.
+- Support indexes and constraints like regular tables.
+
+Temporary Table vs CTE
+Temporary Table                                                  	CTE
+Physically stored in tempdb (SQL Server)	        Virtual result set, not stored as a table
+Can be referenced multiple times	                Exists only within a single SQL statement
+Supports indexes and constraints	                Does not support indexes
+Can insert, update, and delete data	                Read-only within the query
+Better for large intermediate datasets	                Better for improving query readability
+
+
+Real-Time Use Cases
+Storing filtered customer data for reporting.
+Holding intermediate results in ETL workflows.
+Breaking large reports into multiple processing steps.
+Processing data inside stored procedures.
+
+Interview Answer (Short)
+
+A Temporary Table is a table created to store data temporarily during a database session or transaction. It behaves like a regular table and can be queried, updated, indexed, and joined with other tables. Temporary tables are commonly used to store intermediate results, 
+improve query performance, and simplify complex SQL operations. They are automatically removed when the session ends or can be dropped explicitly.
+
+
+-- 3. What is a View in SQL?
+
+A View in SQL is a virtual table created from the result of a SELECT query. It does not store the actual data (except in materialized/indexed views in some databases); instead, it stores the SQL query and displays data from one or more underlying tables whenever it is queried.
+
+Syntax
+CREATE VIEW View_Name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+
+Example
+
+Suppose you have an Employee table:
+
+| Emp_ID | Emp_Name | Department | Salary |
+| -----: | -------- | ---------- | -----: |
+|    101 | Alice    | HR         |  50000 |
+|    102 | Bob      | IT         |  70000 |
+|    103 | Charlie  | HR         |  60000 |
+|    104 | David    | IT         |  80000 |
+
+create a view
+CREATE VIEW HighSalaryEmployees AS
+SELECT Emp_ID, Emp_Name, Department, Salary
+FROM Employee
+WHERE Salary > 60000;
+
+query the view
+SELECT *
+FROM HighSalaryEmployees;
+
+output
+| Emp_ID | Emp_Name | Department | Salary |
+| -----: | -------- | ---------- | -----: |
+|    102 | Bob      | IT         |  70000 |
+|    104 | David    | IT         |  80000 |
+
+Advantages of Views
+Simplify complex SQL queries.
+Improve security by exposing only required columns or rows.
+Hide the complexity of joins and calculations.
+Promote code reuse by storing commonly used queries.
+Ensure consistent query logic across applications.
+Types of Views
+Simple View
+Based on a single table.
+Usually supports INSERT, UPDATE, and DELETE (subject to database rules).
+Complex View
+Based on multiple tables, joins, or aggregate functions.
+Often read-only.
+View vs Table
+View	Table
+Virtual table	Physical table
+Stores only the query definition	Stores actual data
+Data is retrieved from underlying tables	Data is stored permanently
+Requires less storage	Requires storage for data
+Reflects the latest data from base tables	Stores its own data
+Real-Time Use Cases
+Showing only employee names and departments to HR users.
+Hiding sensitive columns such as salary or personal information.
+Creating reusable reports that combine data from multiple tables.
+Providing a simplified interface for application developers.
+Interview Answer (Short)
+
+A View is a virtual table created using a SELECT statement. It stores the query definition rather than the actual data and displays data from one or more underlying tables whenever it is queried. Views are used to simplify complex queries, improve security, and provide a consistent way to access data.
+
+-- 4. What is the difference between a CTE, Temporary Table, and View?
+
+| Feature                            | CTE (Common Table Expression)                                | Temporary Table                                                         | View                                                                     |
+| ---------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Definition**                     | A temporary named result set created using the `WITH` clause | A temporary table stored in the database (e.g., `tempdb` in SQL Server) | A virtual table created from a `SELECT` query                            |
+| **Storage**                        | Not physically stored                                        | Physically stored temporarily                                           | Stores only the query definition, not the data                           |
+| **Lifetime**                       | Exists only for a single SQL statement                       | Exists until the session ends or it is dropped                          | Exists permanently until it is dropped                                   |
+| **Can Store Data?**                | No                                                           | Yes                                                                     | No (except materialized/indexed views in some databases)                 |
+| **Can Be Reused?**                 | Only within the same query                                   | Yes, throughout the session                                             | Yes, by any user with permissions                                        |
+| **Supports Indexes?**              | No                                                           | Yes                                                                     | Not on a regular view (indexed/materialized views are database-specific) |
+| **Supports INSERT/UPDATE/DELETE?** | No                                                           | Yes                                                                     | Depends on the view and database rules                                   |
+| **Performance**                    | Best for simplifying a single query                          | Better for large intermediate datasets used multiple times              | Good for frequently used queries and reporting                           |
+| **Main Purpose**                   | Improve readability of complex queries                       | Store intermediate results for processing                               | Simplify data access and improve security                                |
+
+Example
+1. CTE
+WITH HighSalary AS (
+    SELECT *
+    FROM Employee
+    WHERE Salary > 60000
+)
+SELECT *
+FROM HighSalary;
+Used only in this query.
+Automatically disappears after execution.
+2. Temporary Table
+CREATE TABLE #HighSalary (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100),
+    Salary DECIMAL(10,2)
+);
+
+INSERT INTO #HighSalary
+SELECT Emp_ID, Emp_Name, Salary
+FROM Employee
+WHERE Salary > 60000;
+
+SELECT * FROM #HighSalary;
+Data is stored temporarily.
+Can be queried multiple times during the session.
+3. View
+CREATE VIEW HighSalaryEmployees AS
+SELECT Emp_ID, Emp_Name, Salary
+FROM Employee
+WHERE Salary > 60000;
+SELECT *
+FROM HighSalaryEmployees;
+Created once and reused whenever needed.
+Always shows the latest data from the underlying table.
+When to Use Each?
+Use a CTE when:
+You want to make a complex query easier to read.
+You need a result only once.
+You need a recursive query.
+Use a Temporary Table when:
+You need to store intermediate results.
+You will reuse the data multiple times.
+You need indexes or want to modify the data.
+Use a View when:
+You have a query that will be reused frequently.
+You want to hide complex joins.
+You need to restrict access to certain columns or rows.
+Interview Answer (Short)
+
+CTE, Temporary Table, and View are all used to simplify SQL queries, but they serve different purposes:
+
+A CTE is a temporary named result set that exists only for a single SQL statement and is mainly used to improve query readability.
+A Temporary Table is a temporary physical table that stores data during a session, supports indexes and data modifications, and is useful for intermediate processing.
+A View is a permanent virtual table that stores a query definition rather than data. It is used to simplify complex queries, improve security, and provide reusable data access.
+
+-- 5. Which keyword is used to create a CTE, Temporary Table, and View?
+The keywords used to create a CTE, Temporary Table, and View are:
+
+| Object                            | Keyword                                                                 | Syntax                                |
+| --------------------------------- | ----------------------------------------------------------------------- | ------------------------------------- |
+| **CTE (Common Table Expression)** | `WITH`                                                                  | `WITH CTE_Name AS (...)`              |
+| **Temporary Table**               | `CREATE TABLE` (with a temporary table prefix, e.g., `#` in SQL Server) | `CREATE TABLE #TempTable (...)`       |
+| **View**                          | `CREATE VIEW`                                                           | `CREATE VIEW View_Name AS SELECT ...` |
+
+Examples
+1. CTE
+WITH EmployeeCTE AS (
+    SELECT Emp_ID, Emp_Name, Salary
+    FROM Employee
+)
+SELECT *
+FROM EmployeeCTE;
+2. Temporary Table (SQL Server)
+CREATE TABLE #EmployeeTemp (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100),
+    Salary DECIMAL(10,2)
+);
+3. View
+CREATE VIEW EmployeeView AS
+SELECT Emp_ID, Emp_Name, Salary
+FROM Employee;
+Interview Answer (Short)
+CTE: Created using the WITH keyword.
+Temporary Table: Created using CREATE TABLE (with a temporary table identifier such as # in SQL Server or TEMPORARY in MySQL).
+View: Created using the CREATE VIEW statement.
+
+
+Intermediate Level
+
+-- 6. When would you choose a CTE instead of a Subquery?
+
+You would choose a CTE (Common Table Expression) instead of a Subquery when you want to make your SQL query more readable, maintainable, or reusable.
+
+When to Use a CTE Instead of a Subquery
+Improve Readability
+CTEs break complex queries into smaller, logical steps.
+Easier to understand than deeply nested subqueries.
+Reuse the Result
+A CTE can be referenced multiple times within the same SQL statement.
+A subquery often has to be repeated.
+Simplify Complex Queries
+Useful when a query contains multiple joins, aggregations, or calculations.
+Recursive Queries
+CTEs support recursion (e.g., employee-manager hierarchies).
+Subqueries do not support recursive operations.
+
+Example Using a Subquery
+
+SELECT Emp_Name, Salary
+FROM (
+    SELECT Emp_Name, Salary
+    FROM Employee
+    WHERE Salary > 60000
+) AS HighSalary;
+
+Example Using a CTE
+
+WITH HighSalary AS (
+    SELECT Emp_Name, Salary
+    FROM Employee
+    WHERE Salary > 60000
+)
+SELECT *
+FROM HighSalary;
+
+The CTE version is generally easier to read, especially as the query becomes more complex.
+
+| CTE                                                | Subquery                                        |
+| -------------------------------------------------- | ----------------------------------------------- |
+| Uses the `WITH` keyword                            | Written inside `SELECT`, `FROM`, or `WHERE`     |
+| Easier to read and maintain                        | Can become difficult to read when deeply nested |
+| Can be referenced multiple times in the same query | Usually repeated if needed multiple times       |
+| Supports recursive queries                         | Does not support recursion                      |
+| Best for complex SQL                               | Best for simple filtering or calculations       |
+
+
+Real-Time Example
+
+Suppose you need to:
+
+Calculate each department's average salary.
+Compare every employee's salary to that average.
+
+A CTE lets you calculate the department averages once and then join to them, making the query cleaner than embedding the same subquery multiple times.
+
+Interview Answer (Short)
+
+I choose a CTE instead of a subquery when the query is complex, when I need to reuse the same result within a single statement, or when I want to improve readability and maintainability. CTEs also support recursive queries, which subqueries do not. For simple, one-time filtering, a subquery is often sufficient.
+
+-- 7. When would you use a Temporary Table instead of a CTE?
+
+You would use a Temporary Table instead of a CTE when you need to store intermediate data, reuse it multiple times, or modify/index the data during the session.
+
+When to Use a Temporary Table Instead of a CTE
+Reuse Data Multiple Times
+Temporary tables can be queried multiple times in the same session or stored procedure.
+A CTE exists only for a single SQL statement.
+Store Large Intermediate Results
+Better for handling large datasets that need multiple processing steps.
+Helps avoid recalculating the same result repeatedly.
+Modify the Data
+You can INSERT, UPDATE, and DELETE rows in a temporary table.
+A CTE cannot be modified like a table.
+Create Indexes
+Temporary tables support indexes and constraints, which can improve performance for large datasets.
+CTEs do not support indexes.
+Use in Stored Procedures
+Temporary tables are commonly used in ETL jobs and stored procedures where intermediate data is processed in several steps.
+Example Using a Temporary Table
+CREATE TABLE #HighSalary (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100),
+    Salary DECIMAL(10,2)
+);
+
+INSERT INTO #HighSalary
+SELECT Emp_ID, Emp_Name, Salary
+FROM Employee
+WHERE Salary > 60000;
+
+SELECT * FROM #HighSalary;
+
+SELECT COUNT(*) AS EmployeeCount
+FROM #HighSalary;
+
+Here, the temporary table is used multiple times, making it a better choice than a CTE.
+
+Example Using a CTE
+WITH HighSalary AS (
+    SELECT Emp_ID, Emp_Name, Salary
+    FROM Employee
+    WHERE Salary > 60000
+)
+SELECT *
+FROM HighSalary;
+
+The CTE is available only for this single query.
+
+Temporary Table vs CTE
+
+| Temporary Table                                | CTE                                              |
+| ---------------------------------------------- | ------------------------------------------------ |
+| Exists until the session ends or it is dropped | Exists only for one SQL statement                |
+| Can be referenced multiple times               | Can be referenced only within the same statement |
+| Supports `INSERT`, `UPDATE`, and `DELETE`      | Used only as a query result set                  |
+| Supports indexes                               | Does not support indexes                         |
+| Better for large intermediate datasets         | Better for improving query readability           |
+
+
+Real-Time Example
+
+Imagine you're generating a monthly sales report:
+
+Filter millions of sales records.
+Store the filtered results.
+Join them with customer and product tables.
+Generate multiple summaries.
+
+A Temporary Table is a better choice because the filtered data is reused several times, reducing repeated computation.
+
+Interview Answer (Short)
+
+I use a Temporary Table instead of a CTE when I need to store intermediate results, reuse the data across multiple queries, modify the data, or create indexes for better performance. A CTE is best for improving the readability of a single SQL statement, while a Temporary Table is better for multi-step processing and large datasets.
+
+-- 8. What are the advantages of using Views in a database?
+
+Views provide several advantages, especially in reporting, security, and simplifying database access.
+
+Advantages of Using Views
+1. Simplifies Complex Queries
+A view can hide complex JOINs, calculations, and filters.
+Users can query the view instead of writing long SQL statements.
+
+Example:
+SELECT *
+FROM EmployeeDetailsView;
+
+Instead of writing multiple JOINs every time.
+
+2. Improves Security
+You can expose only the required columns or rows.
+Sensitive information such as salaries or passwords can be hidden.
+
+Example:
+
+HR can view employee salaries.
+Other employees can view only employee names and departments.
+3. Reusability
+Write a complex query once and save it as a view.
+Multiple users and applications can reuse it.
+4. Easier Maintenance
+If the underlying query changes, you update the view instead of modifying every application or report that uses it.
+5. Provides Consistent Data
+Everyone accesses the same business logic through the view.
+Reduces inconsistencies across reports.
+6. Simplifies Reporting
+Reporting tools can query a view directly without knowing the database structure.
+7. Hides Database Complexity
+Users do not need to know how tables are related.
+The view presents a simpler interface.
+8. Always Shows Current Data
+A standard view does not store data.
+It retrieves the latest data from the underlying tables whenever it is queried.
+Real-Time Example
+
+Suppose there are two tables:
+
+Employee
+Department
+
+Instead of asking every developer to write the same JOIN:
+
+SELECT e.Emp_Name, d.Department_Name
+FROM Employee e
+JOIN Department d
+ON e.Department_ID = d.Department_ID;
+
+Create a view:
+
+CREATE VIEW EmployeeDepartmentView AS
+SELECT e.Emp_Name, d.Department_Name
+FROM Employee e
+JOIN Department d
+ON e.Department_ID = d.Department_ID;
+
+Now anyone can simply run:
+
+SELECT *
+FROM EmployeeDepartmentView;
+Interview Answer (Short)
+
+Views simplify complex queries, improve security by restricting access to sensitive data, provide reusable query logic, 
+ensure consistent data across applications, simplify reporting, hide database complexity, and always display the latest data from the 
+underlying tables. They are widely used in real-world applications for reporting and controlled data access.
+
+-- 9. Can a CTE be referenced multiple times within the same SQL query? Explain with an
+example.
+
+Yes. A CTE (Common Table Expression) can be referenced multiple times within the same SQL statement. This is one of its key advantages over a subquery, which often needs to be repeated.
+
+Note: A CTE can be reused only within the single SQL statement in which it is defined. It is not available to subsequent SQL statements.
+
+Example
+
+Suppose you have an Employee table.
+
+Query
+WITH HighSalary AS (
+    SELECT Emp_ID, Emp_Name, Department, Salary
+    FROM Employee
+    WHERE Salary > 60000
+)
+SELECT Department, COUNT(*) AS Employee_Count
+FROM HighSalary
+GROUP BY Department
+
+UNION ALL
+
+SELECT 'Total', COUNT(*)
+FROM HighSalary;
+Explanation
+
+The CTE HighSalary is referenced twice in the same SQL statement:
+
+To count employees in each department.
+To count the total number of high-salary employees.
+
+Instead of writing the same query twice, the CTE is defined once and reused.
+
+Another Example (Self-Join Using a CTE)
+WITH EmployeeCTE AS (
+    SELECT Emp_ID, Emp_Name, Department
+    FROM Employee
+)
+SELECT e1.Emp_Name AS Employee1,
+       e2.Emp_Name AS Employee2,
+       e1.Department
+FROM EmployeeCTE e1
+JOIN EmployeeCTE e2
+ON e1.Department = e2.Department
+AND e1.Emp_ID < e2.Emp_ID;
+
+Here, the same CTE (EmployeeCTE) is referenced twice (e1 and e2) in a self-join.
+
+Key Points
+✅ A CTE can be referenced multiple times within the same SQL statement.
+✅ It improves readability and avoids repeating the same logic.
+❌ It cannot be referenced in a separate SQL statement.
+Interview Answer (Short)
+
+Yes. A CTE can be referenced multiple times within the same SQL statement. This improves readability and avoids repeating the same query logic. However, a CTE exists only for the duration of that single statement and cannot be used in subsequent SQL statements.
+
+-- 10. Can you perform INSERT, UPDATE, and DELETE operations on a Temporary
+Table? Why?
+
+Yes. You can perform INSERT, UPDATE, and DELETE operations on a Temporary Table because it behaves like a regular table. The main difference is that it stores data temporarily and is automatically removed when the session ends (or when explicitly dropped, depending on the database).
+
+Why?
+
+A Temporary Table:
+
+Stores data physically (e.g., in tempdb in SQL Server).
+Supports DML (Data Manipulation Language) operations:
+INSERT
+UPDATE
+DELETE
+Can have indexes, constraints, and primary keys.
+Can be joined with other tables.
+Example
+Step 1: Create a Temporary Table
+CREATE TABLE #EmployeeTemp (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100),
+    Salary DECIMAL(10,2)
+);
+Step 2: INSERT Data
+INSERT INTO #EmployeeTemp (Emp_ID, Emp_Name, Salary)
+VALUES
+(101, 'Alice', 50000),
+(102, 'Bob', 65000);
+Step 3: UPDATE Data
+UPDATE #EmployeeTemp
+SET Salary = 70000
+WHERE Emp_ID = 102;
+Step 4: DELETE Data
+DELETE FROM #EmployeeTemp
+WHERE Emp_ID = 101;
+Step 5: View the Data
+SELECT *
+FROM #EmployeeTemp;
+Real-Time Example
+
+Suppose you're generating a monthly sales report:
+
+Insert filtered sales data into a temporary table.
+Update some calculated fields.
+Delete invalid or duplicate records.
+Generate the final report.
+
+A Temporary Table is ideal because it allows you to manipulate intermediate data before producing the final result.
+
+Interview Answer (Short)
+
+Yes. A Temporary Table supports INSERT, UPDATE, and DELETE operations because it behaves like a regular table. It physically stores data temporarily, allowing data to be modified, indexed, and queried during the session. This makes Temporary Tables useful for storing and processing intermediate results in complex SQL queries and ETL processes.
+
+
+Advanced Level
+-- 11. What is a Recursive CTE? Where is it commonly used in real-world applications?
+
+A Recursive CTE (Common Table Expression) is a CTE that references itself. It is used to process hierarchical or recursive data, where each row is related to another row in the same table.
+
+A Recursive CTE has two parts:
+
+Anchor Member – The starting point of the recursion.
+Recursive Member – References the CTE itself and continues until no more rows are returned.
+Syntax
+WITH CTE_Name AS
+(
+    -- Anchor Member
+    SELECT columns
+    FROM table_name
+    WHERE condition
+
+    UNION ALL
+
+    -- Recursive Member
+    SELECT columns
+    FROM table_name t
+    JOIN CTE_Name c
+        ON t.column = c.column
+)
+SELECT *
+FROM CTE_Name;
+Example
+
+Suppose you have an Employee table:
+
+| Emp_ID | Emp_Name | Manager_ID |
+| -----: | -------- | ---------: |
+|      1 | John     |       NULL |
+|      2 | Alice    |          1 |
+|      3 | Bob      |          1 |
+|      4 | Charlie  |          2 |
+|      5 | David    |          2 |
+
+Query: Display the Employee Hierarchy
+WITH EmployeeHierarchy AS
+(
+    -- Anchor Member (Top-level manager)
+    SELECT Emp_ID, Emp_Name, Manager_ID
+    FROM Employee
+    WHERE Manager_ID IS NULL
+
+    UNION ALL
+
+    -- Recursive Member
+    SELECT e.Emp_ID, e.Emp_Name, e.Manager_ID
+    FROM Employee e
+    JOIN EmployeeHierarchy eh
+        ON e.Manager_ID = eh.Emp_ID
+)
+SELECT *
+FROM EmployeeHierarchy;
+
+output
+| Emp_ID | Emp_Name | Manager_ID |
+| -----: | -------- | ---------: |
+|      1 | John     |       NULL |
+|      2 | Alice    |          1 |
+|      3 | Bob      |          1 |
+|      4 | Charlie  |          2 |
+|      5 | David    |          2 |
+
+Common Real-World Applications
+Employee-Manager Hierarchies
+Display all employees under a manager.
+Organization Charts
+Show reporting structures within a company.
+Category/Subcategory Hierarchies
+E-commerce product categories.
+Bill of Materials (BOM)
+Manufacturing products and their components.
+Folder/File Structures
+Traverse directories and subdirectories.
+Family Trees
+Display parent-child relationships.
+Graph and Network Traversal
+Find connected nodes or paths.
+
+Advantages
+Simplifies hierarchical queries.
+Eliminates the need for loops or cursors.
+Easy to read and maintain.
+Efficient for recursive relationships.
+
+Interview Answer (Short)
+
+A Recursive CTE is a Common Table Expression that references itself to process hierarchical or recursive data. 
+It consists of an anchor member, which returns the initial rows, and a recursive member, which repeatedly retrieves related rows until no more results are found. It is commonly used for employee-manager hierarchies, organization charts, folder structures, category hierarchies, and bill-of-materials (BOM) applications.
+
+-- 12. Are all Views updatable? Explain the conditions under which a View becomes nonupdatable.
+
+No. Not all Views are updatable.
+
+A view is updatable only if the database can clearly determine which row in the underlying table should be modified. If the view contains certain SQL features, it becomes non-updatable (or read-only, depending on the database).
+
+When is a View Updatable?
+
+A view is generally updatable if it:
+
+Is based on a single table.
+Does not use aggregate functions (SUM, COUNT, AVG, MIN, MAX).
+Does not use GROUP BY or HAVING.
+Does not use DISTINCT.
+Does not use set operators such as UNION, UNION ALL, INTERSECT, or EXCEPT.
+Does not contain calculated (derived) columns that are being updated.
+Includes enough information (such as the primary key) for the database to identify the underlying row.
+Example of an Updatable View
+CREATE VIEW EmployeeView AS
+SELECT Emp_ID, Emp_Name, Department, Salary
+FROM Employee;
+
+You can perform:
+
+UPDATE EmployeeView
+SET Salary = 70000
+WHERE Emp_ID = 101;
+When Does a View Become Non-Updatable?
+
+A view is generally non-updatable if it contains:
+
+1. Aggregate Functions
+CREATE VIEW DeptSalary AS
+SELECT Department, AVG(Salary) AS AvgSalary
+FROM Employee
+GROUP BY Department;
+
+Reason: There is no single employee row to update.
+
+2. GROUP BY or HAVING
+SELECT Department, COUNT(*)
+FROM Employee
+GROUP BY Department;
+
+Reason: Rows are grouped together.
+
+3. DISTINCT
+CREATE VIEW EmployeeDept AS
+SELECT DISTINCT Department
+FROM Employee;
+
+Reason: Duplicate rows are removed, making updates ambiguous.
+
+4. Set Operators (UNION, UNION ALL, etc.)
+CREATE VIEW AllEmployees AS
+SELECT Emp_ID, Emp_Name FROM CurrentEmployees
+UNION
+SELECT Emp_ID, Emp_Name FROM FormerEmployees;
+
+Reason: The database cannot always determine which source table should be updated.
+
+5. Complex Joins (in many databases)
+CREATE VIEW EmployeeDepartment AS
+SELECT e.Emp_ID,
+       e.Emp_Name,
+       d.Department_Name
+FROM Employee e
+JOIN Department d
+ON e.Department_ID = d.Department_ID;
+
+Reason: Updating columns from multiple tables through a single view may be ambiguous. Some databases allow limited updates if only one base table is affected.
+
+6. Calculated Columns
+CREATE VIEW EmployeeBonus AS
+SELECT Emp_ID,
+       Salary,
+       Salary * 0.10 AS Bonus
+FROM Employee;
+
+Reason: The Bonus column is derived and cannot be updated directly.
+
+Summary Table
+View Feature	                        Updatable?
+Single table	                         ✅ Usually Yes
+Aggregate functions (SUM, COUNT, AVG)    	❌ No
+GROUP BY / HAVING	                        ❌ No
+DISTINCT	                                ❌ No
+UNION / UNION ALL                       	❌ No
+Calculated columns	                        ❌ Derived columns cannot be updated
+Multiple-table joins	                        ⚠️ Depends on the database and the update
+
+
+Interview Answer (Short)
+
+No. Not all views are updatable. A view is generally updatable when it is based on a single table and does not contain aggregate functions, GROUP BY, HAVING, DISTINCT, set operators (UNION, etc.), or derived columns. Views with these features are usually non-updatable because the database cannot uniquely identify which underlying row should be modified.
+
+
+-- 13. What happens to a Temporary Table when the database session ends?
+
+When the database session ends, a Temporary Table is automatically dropped (deleted) by the database. This means both the table structure and its data are removed, so it is no longer available.
+
+The exact behavior depends on the type of temporary table and the database system.
+
+Types of Temporary Tables (SQL Server)
+1. Local Temporary Table (#)
+Visible only to the session that created it.
+Automatically dropped when that session ends.
+
+Example:
+
+CREATE TABLE #EmployeeTemp (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100)
+);
+
+Once the session is closed, #EmployeeTemp is automatically removed.
+
+2. Global Temporary Table (##)
+Visible to all sessions.
+Remains available until:
+The session that created it ends, and
+No other session is using it.
+
+Example:
+
+CREATE TABLE ##EmployeeTemp (
+    Emp_ID INT,
+    Emp_Name VARCHAR(100)
+);
+Why Are Temporary Tables Removed?
+
+Temporary tables are designed to:
+
+Store intermediate or session-specific data.
+Prevent unnecessary storage usage.
+Ensure temporary data does not persist after processing is complete.
+Real-Time Example
+
+Suppose an ETL job:
+
+Creates a temporary table.
+Loads intermediate data.
+Processes the data.
+Generates the final report.
+
+After the job or database session finishes, the temporary table is automatically deleted.
+
+Interview Answer (Short)
+
+When the database session ends, a local temporary table is automatically dropped, and both its structure and data are removed. A global temporary table remains available until the creating session ends and no other session is using it. This automatic cleanup helps manage temporary data efficiently and prevents unnecessary storage usage.
+
+-- 14. Does a CTE improve query performance? Explain your answer.
+
+Not necessarily. A CTE (Common Table Expression) does not automatically improve query performance. Its primary purpose is to improve the readability and maintainability of SQL queries.
+
+The SQL optimizer decides how to execute the query, so a CTE may perform the same as an equivalent subquery.
+
+Explanation
+
+A CTE:
+
+Makes complex SQL queries easier to understand.
+Breaks large queries into logical steps.
+Can replace repeated nested subqueries.
+Does not permanently store data.
+
+Whether a CTE improves performance depends on the database engine and the execution plan.
+
+When a CTE May Help
+Simplifies complex queries, making them easier to debug and maintain.
+Supports recursive queries.
+In some cases, the optimizer can generate an efficient execution plan.
+When a CTE May Not Help
+If the CTE is referenced multiple times, some database systems may re-evaluate it each time instead of storing the result.
+For large intermediate datasets used repeatedly, a Temporary Table may perform better because the data is stored once and can be indexed.
+Example
+Using a CTE
+WITH HighSalary AS (
+    SELECT Emp_ID, Emp_Name, Salary
+    FROM Employee
+    WHERE Salary > 60000
+)
+SELECT *
+FROM HighSalary;
+
+This query is easier to read, but it is not necessarily faster than writing the same logic as a subquery.
+
+CTE vs Temporary Table (Performance)
+CTE	                             Temporary Table
+Improves readability	         Stores intermediate results
+Not physically stored	         Physically stored temporarily
+Best for a single query	         Best when data is reused multiple times
+Cannot be indexed	         Can be indexed for better performance
+
+
+Real-Time Example
+
+Suppose you're generating a report that uses the same filtered dataset in five different queries.
+
+CTE: The database may process the filtering logic multiple times.
+Temporary Table: The filtered data is stored once, and all five queries can reuse it, which may improve performance.
+Interview Answer (Short)
+
+No. A CTE does not automatically improve query performance. Its main purpose is to improve query readability and maintainability. The database optimizer determines the execution plan, so a CTE often performs similarly to an equivalent subquery. If the same intermediate result must be reused multiple times or indexed, a Temporary Table is usually a better choice for performance.
+
+
+-- 15. Can a View contain JOINs, Aggregate Functions, GROUP BY, or Window Functions? Explain with examples.
+
+Yes. A View can contain JOINs, Aggregate Functions, GROUP BY, and Window Functions because a view is simply a stored SELECT statement.
+
+However, views containing these features are often non-updatable because the database cannot always map changes back to the underlying tables.
+
+1. View with JOIN
+
+A view can combine data from multiple tables.
+
+Example
+CREATE VIEW EmployeeDepartmentView AS
+SELECT e.Emp_ID,
+       e.Emp_Name,
+       d.Department_Name
+FROM Employee e
+JOIN Department d
+ON e.Department_ID = d.Department_ID;
+
+Purpose:
+
+Display employee names along with department names.
+Commonly used in reports and dashboards.
+2. View with Aggregate Functions
+
+A view can contain aggregate functions like SUM(), AVG(), COUNT(), MIN(), and MAX().
+
+Example
+CREATE VIEW DepartmentSalary AS
+SELECT Department,
+       AVG(Salary) AS AvgSalary
+FROM Employee
+GROUP BY Department;
+
+Purpose:
+
+Show the average salary for each department.
+3. View with GROUP BY
+
+A view can group data to create summary reports.
+
+Example
+CREATE VIEW EmployeeCount AS
+SELECT Department,
+       COUNT(*) AS TotalEmployees
+FROM Employee
+GROUP BY Department;
+
+Purpose:
+
+Display the number of employees in each department.
+4. View with Window Functions
+
+A view can include window functions such as:
+
+ROW_NUMBER()
+RANK()
+DENSE_RANK()
+LAG()
+LEAD()
+Example
+CREATE VIEW EmployeeRank AS
+SELECT Emp_ID,
+       Emp_Name,
+       Department,
+       Salary,
+       RANK() OVER (
+           PARTITION BY Department
+           ORDER BY Salary DESC
+       ) AS SalaryRank
+FROM Employee;
+
+Purpose:
+
+Rank employees by salary within each department.
+Summary Table
+Feature	Allowed in a View?	Example
+JOIN	✅ Yes	Combine Employee and Department tables
+Aggregate Functions (SUM, COUNT, AVG)	✅ Yes	Department salary summary
+GROUP BY	✅ Yes	Employee count by department
+Window Functions (ROW_NUMBER, RANK, DENSE_RANK)	✅ Yes	Rank employees by salary
+
+Note: Although these features are allowed, such views are usually not updatable because the database cannot uniquely identify which underlying row should be modified.
+
+Real-Time Examples
+JOIN View: Employee details with department and manager information.
+Aggregate View: Total monthly sales by region.
+GROUP BY View: Number of orders placed by each customer.
+Window Function View: Top 3 highest-paid employees in each department.
+Interview Answer (Short)
+
+Yes. A View can contain JOINs, Aggregate Functions, GROUP BY, and Window Functions because it stores a SELECT query. These features are commonly used for reporting and analytics. However, views containing aggregates, grouping, or many complex joins are generally non-updatable, as the database cannot always determine how to apply changes to the underlying tables.
+
+16. You need to calculate department-wise average salary and use the result only once. Would you choose a CTE, Temporary Table, or View? Why?
+Answer
+
+I would choose a CTE because the result is required only once within a single query. A CTE improves readability, avoids creating unnecessary objects, and is ideal for one-time calculations.
+
+Example
+WITH DeptAvgSalary AS (
+    SELECT Department,
+           AVG(Salary) AS AvgSalary
+    FROM Employee
+    GROUP BY Department
+)
+SELECT *
+FROM DeptAvgSalary;
+Why not the others?
+Temporary Table: Best when the result needs to be reused multiple times.
+View: Best for reusable queries that many users or applications need.
+Interview Answer (Short)
+
+I would use a CTE because the department-wise average salary is needed only once. A CTE makes the query easy to read and avoids creating a temporary or permanent database object.
+
+17. During an ETL process, you need to store intermediate transformed data and reuse it across multiple SQL statements. Which object would you choose and why?
+Answer
+
+I would choose a Temporary Table because ETL processes often require storing intermediate data that is reused across multiple SQL statements. Temporary tables also support indexing and data modifications.
+
+Example
+CREATE TABLE #SalesData (
+    OrderID INT,
+    CustomerID INT,
+    Amount DECIMAL(10,2)
+);
+
+INSERT INTO #SalesData
+SELECT OrderID, CustomerID, Amount
+FROM Sales
+WHERE OrderDate >= '2026-01-01';
+
+SELECT * FROM #SalesData;
+
+UPDATE #SalesData
+SET Amount = Amount * 1.10;
+Why?
+Stores intermediate data.
+Can be reused many times.
+Supports INSERT, UPDATE, and DELETE.
+Supports indexes for better performance.
+Interview Answer (Short)
+
+I would use a Temporary Table because ETL processes require storing and reusing intermediate transformed data across multiple SQL statements. Temporary tables also support updates, indexes, and better performance for large datasets.
+
+18. Your manager wants to hide confidential employee salary data while allowing users to view only Employee ID, Name, and Department. Which SQL object would you use and why?
+Answer
+
+I would use a View because it allows exposing only the required columns while hiding sensitive data such as salary.
+
+Example
+CREATE VIEW EmployeePublicView AS
+SELECT Emp_ID,
+       Emp_Name,
+       Department
+FROM Employee;
+
+Users can access:
+
+SELECT *
+FROM EmployeePublicView;
+Why?
+Improves security.
+Hides confidential columns.
+Simplifies user access.
+Centralizes access rules.
+Interview Answer (Short)
+
+I would use a View because it provides a secure way to expose only the required columns while hiding confidential information such as employee salaries.
+
+19. You have written the same complex SQL query in multiple reports. How can Views help solve this problem?
+Answer
+
+Instead of repeating the same SQL query in every report, I would create a View. The reports can then query the view directly.
+
+Example
+
+Without a View:
+
+SELECT e.Emp_Name,
+       d.Department_Name
+FROM Employee e
+JOIN Department d
+ON e.Department_ID = d.Department_ID;
+
+With a View:
+
+CREATE VIEW EmployeeDepartmentView AS
+SELECT e.Emp_Name,
+       d.Department_Name
+FROM Employee e
+JOIN Department d
+ON e.Department_ID = d.Department_ID;
+
+Now every report can simply use:
+
+SELECT *
+FROM EmployeeDepartmentView;
+Benefits
+Eliminates duplicate SQL.
+Easier maintenance.
+Ensures consistent business logic.
+Reduces development effort.
+Interview Answer (Short)
+
+I would create a View containing the complex query. All reports can use the view instead of repeating the same SQL, making maintenance easier and ensuring consistent results.
+
+20. A company has an Employee table where employees report to managers (self-referencing hierarchy). How would you retrieve the complete reporting hierarchy using SQL? Which feature would you use and why?
+Answer
+
+I would use a Recursive CTE because it is designed to retrieve hierarchical data such as employee-manager relationships.
+
+Example Table
+Emp_ID	Emp_Name	Manager_ID
+1	John	NULL
+2	Alice	1
+3	Bob	1
+4	Charlie	2
+5	David	2
+Query
+WITH EmployeeHierarchy AS (
+    -- Anchor Member
+    SELECT Emp_ID,
+           Emp_Name,
+           Manager_ID,
+           1 AS Level
+    FROM Employee
+    WHERE Manager_ID IS NULL
+
+    UNION ALL
+
+    -- Recursive Member
+    SELECT e.Emp_ID,
+           e.Emp_Name,
+           e.Manager_ID,
+           eh.Level + 1
+    FROM Employee e
+    JOIN EmployeeHierarchy eh
+        ON e.Manager_ID = eh.Emp_ID
+)
+SELECT *
+FROM EmployeeHierarchy;
+Why?
+Retrieves all reporting levels.
+Eliminates loops or cursors.
+Efficient for hierarchical data.
+Easy to understand and maintain.
+Real-Time Uses
+Employee-manager hierarchy.
+Organization charts.
+Folder structures.
+Product category hierarchies.
+Bill of Materials (BOM).
+Interview Answer (Short)
+
+I would use a Recursive CTE because it is specifically designed for hierarchical data. It starts with the top-level manager (anchor member) and recursively retrieves employees reporting to each manager until the entire hierarchy is returned.
+
+
+--                             Bonus Interview Questions
+
+-- 1. Can we create multiple CTEs in a single query?
+
+Yes. You can define multiple CTEs in a single query by separating them with commas after the WITH keyword.
+
+Example
+WITH DeptSalary AS (
+    SELECT Department, AVG(Salary) AS AvgSalary
+    FROM Employee
+    GROUP BY Department
+),
+HighSalary AS (
+    SELECT Emp_ID, Emp_Name, Department, Salary
+    FROM Employee
+    WHERE Salary > 60000
+)
+SELECT h.Emp_Name,
+       h.Department,
+       d.AvgSalary
+FROM HighSalary h
+JOIN DeptSalary d
+ON h.Department = d.Department;
+Interview Answer (Short)
+
+Yes. Multiple CTEs can be created in a single query by separating them with commas after the WITH clause.
+
+-- 2. Can a View be created from another View?
+
+Yes. A view can be created using another view as its source.
+
+Example
+CREATE VIEW EmployeeView AS
+SELECT Emp_ID, Emp_Name, Department
+FROM Employee;
+CREATE VIEW ITEmployees AS
+SELECT *
+FROM EmployeeView
+WHERE Department = 'IT';
+Interview Answer (Short)
+
+Yes. A View can be created from another View, allowing developers to build reusable and modular database objects.
+
+-- 3. Can a Temporary Table have indexes?
+
+Yes. Temporary tables support indexes just like permanent tables.
+
+Example
+CREATE TABLE #EmployeeTemp
+(
+    Emp_ID INT,
+    Emp_Name VARCHAR(100)
+);
+
+CREATE INDEX IX_EmpID
+ON #EmployeeTemp(Emp_ID);
+Why?
+
+Indexes improve query performance when the temporary table contains a large amount of data.
+
+Interview Answer (Short)
+
+Yes. Temporary tables support clustered and non-clustered indexes, which can improve query performance.
+
+-- 4. Can a CTE be nested?
+
+Generally, No.
+
+A CTE cannot be defined inside another CTE. However, you can create multiple CTEs in a single WITH clause, and one CTE can reference another.
+
+Example
+WITH DeptSalary AS (
+    SELECT Department,
+           AVG(Salary) AS AvgSalary
+    FROM Employee
+    GROUP BY Department
+),
+HighDeptSalary AS (
+    SELECT *
+    FROM DeptSalary
+    WHERE AvgSalary > 60000
+)
+SELECT *
+FROM HighDeptSalary;
+Interview Answer (Short)
+
+No. A CTE cannot be nested inside another CTE. However, multiple CTEs can be defined together, and later CTEs can reference earlier ones.
+
+-- 5. Can we use Window Functions inside a CTE?
+
+Yes. Window functions are commonly used inside CTEs.
+
+Example
+WITH EmployeeRank AS (
+    SELECT Emp_ID,
+           Emp_Name,
+           Department,
+           Salary,
+           RANK() OVER (
+               PARTITION BY Department
+               ORDER BY Salary DESC
+           ) AS SalaryRank
+    FROM Employee
+)
+SELECT *
+FROM EmployeeRank
+WHERE SalaryRank <= 3;
+Interview Answer (Short)
+
+Yes. Window functions such as ROW_NUMBER(), RANK(), and DENSE_RANK() can be used inside a CTE to simplify ranking and analytical queries.
+
+-- 6. Can a Temporary Table be joined with permanent tables?
+
+Yes. Temporary tables can be joined with permanent tables just like regular tables.
+
+Example
+CREATE TABLE #TopEmployees
+(
+    Emp_ID INT
+);
+
+SELECT e.Emp_Name,
+       d.Department_Name
+FROM #TopEmployees t
+JOIN Employee e
+ON t.Emp_ID = e.Emp_ID
+JOIN Department d
+ON e.Department_ID = d.Department_ID;
+Interview Answer (Short)
+
+Yes. Temporary tables can be joined with permanent tables, views, and even other temporary tables.
+
+-- 7. What is the difference between a View and a Materialized View?
+View	Materialized View
+Virtual table	Physically stores query results
+Stores only the SQL query	Stores the actual data
+Always displays the latest data	Data must be refreshed to reflect changes
+Uses less storage	Requires additional storage
+Suitable for frequently changing data	Suitable for complex reports and data warehouses
+Interview Answer (Short)
+
+A View stores only the query definition and always retrieves the latest data. A Materialized View stores the query results physically, improving performance for complex queries but requiring periodic refreshes to keep the data current.
+
+-- 8. Which is more suitable for improving code readability: CTE or Temporary Table?
+
+CTE is more suitable.
+
+Why?
+Makes complex SQL easier to read.
+Breaks large queries into logical sections.
+Avoids deeply nested subqueries.
+Ideal for one-time query logic.
+
+Temporary tables are mainly used for storing and reusing intermediate data.
+
+Interview Answer (Short)
+
+A CTE is better for improving code readability because it organizes complex queries into clear, logical steps. Temporary tables are better suited for storing intermediate data across multiple SQL statements.
+
+-- 9. Can we drop a Temporary Table manually?
+
+Yes.
+
+Although temporary tables are automatically dropped when the session ends, you can remove them manually using DROP TABLE.
+
+Example
+DROP TABLE #EmployeeTemp;
+Why?
+Frees resources earlier.
+Reduces unnecessary usage of temporary storage.
+Makes scripts cleaner.
+Interview Answer (Short)
+
+Yes. Temporary tables can be dropped manually using the DROP TABLE statement, although they are automatically removed when the session ends.
+
+-- 10. Which SQL object would you use to simplify complex business reports?
+
+View
+
+Why?
+Stores complex SQL queries in one place.
+Eliminates repeated query logic.
+Makes reports easier to maintain.
+Ensures consistent business rules.
+Improves security by exposing only required data.
+Example
+CREATE VIEW EmployeeReport AS
+SELECT e.Emp_Name,
+       d.Department_Name,
+       e.Salary
+FROM Employee e
+JOIN Department d
+ON e.Department_ID = d.Department_ID;
+
+Now every report can use:
+
+SELECT *
+FROM EmployeeReport;
+Interview Answer (Short)
+
+I would use a View because it stores complex query logic in one reusable database object. This simplifies report development, ensures consistent results, and reduces maintenance effort.
