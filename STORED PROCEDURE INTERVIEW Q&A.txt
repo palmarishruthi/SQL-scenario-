@@ -1,0 +1,438 @@
+
+
+                                                    STORED PROCEDURE Interview Questions (20 Important)
+
+-- 1. What is a Stored Procedure?
+
+A Stored Procedure is a precompiled collection of one or more SQL statements that is stored in the database and can be executed whenever needed.
+
+It is used to perform a specific task, such as inserting, updating, deleting, or retrieving data.
+
+Key Points
+Stored in the database.
+Can contain multiple SQL statements.
+Supports input and output parameters.
+Can include programming logic such as IF, ELSE, WHILE, and loops.
+Improves performance because it is compiled once and reused.
+Helps improve security by allowing users to execute the procedure without giving direct access to the underlying tables.
+Reduces code duplication since the same procedure can be called multiple times.
+Syntax (SQL Server)
+CREATE PROCEDURE ProcedureName
+AS
+BEGIN
+    -- SQL Statements
+END;
+Example
+
+Suppose you have an Employee table and want to display all employee details.
+
+CREATE PROCEDURE GetEmployees
+AS
+BEGIN
+    SELECT * FROM Employee;
+END;
+
+Execute the procedure:
+
+EXEC GetEmployees;
+Example with Input Parameter
+
+Retrieve employees belonging to a specific department.
+
+CREATE PROCEDURE GetEmployeesByDepartment
+    @Department VARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM Employee
+    WHERE Department = @Department;
+END;
+
+Execute:
+
+EXEC GetEmployeesByDepartment @Department = 'HR';
+Advantages
+✅ Better performance (precompiled execution plan)
+✅ Reusable code
+✅ Improved security
+✅ Easier maintenance
+✅ Reduces network traffic by executing multiple SQL statements in one call
+Real-Time Example
+
+In a banking application, when money is transferred between two accounts:
+
+Deduct the amount from the sender's account.
+Add the amount to the receiver's account.
+Record the transaction.
+Roll back if any step fails.
+
+Instead of sending multiple SQL statements from the application, all these operations can be placed inside a single stored procedure.
+
+Interview Answer (Short)
+
+A Stored Procedure is a precompiled set of SQL statements stored in the database that performs a specific task. 
+It can accept parameters, contain SQL and programming logic, and is reused by executing its name. Stored procedures improve performance, security, code reusability, and maintainability.
+
+
+-- 2. Why do we use Stored Procedures?
+
+We use Stored Procedures to store business logic in the database and execute SQL operations efficiently and securely.
+
+Reasons for Using Stored Procedures
+Improves Performance
+Stored procedures are precompiled, so SQL Server can reuse the execution plan.
+This reduces query compilation time and improves execution speed.
+Code Reusability
+Write the SQL logic once and call it multiple times from different applications.
+Enhances Security
+Users can be granted permission to execute the procedure without giving direct access to the underlying tables.
+Reduces Network Traffic
+Instead of sending multiple SQL statements from the application, only a single procedure call is sent to the database.
+Easier Maintenance
+If business logic changes, update the stored procedure once instead of modifying code in multiple applications.
+Supports Complex Business Logic
+Can include IF...ELSE, WHILE loops, transactions, error handling, variables, and parameters.
+Ensures Data Consistency
+Multiple related operations can be executed together using transactions.
+Example
+
+Instead of writing this query in every application:
+
+SELECT *
+FROM Employee
+WHERE Department = 'HR';
+
+Create a stored procedure once:
+
+CREATE PROCEDURE GetHREmployees
+AS
+BEGIN
+    SELECT *
+    FROM Employee
+    WHERE Department = 'HR';
+END;
+
+Execute it whenever needed:
+
+EXEC GetHREmployees;
+Real-Time Example
+
+In an e-commerce application, when a customer places an order, a stored procedure can:
+
+Check product availability.
+Reduce inventory.
+Create the order record.
+Generate the invoice.
+Update payment status.
+Roll back all changes if any step fails.
+
+This ensures the entire process is completed reliably in a single operation.
+
+Interview Answer (Short)
+
+Stored Procedures are used to improve performance, increase security, reduce code duplication, simplify maintenance, and execute complex business
+ logic efficiently. They allow SQL statements to be stored and reused, reducing network traffic and ensuring consistent database operations.
+
+-- 3. What are the advantages of Stored Procedures?
+
+Advantages:
+
+✅ Better performance (precompiled execution plan)
+✅ Code reusability
+✅ Improved security
+✅ Easier maintenance
+✅ Reduces network traffic
+✅ Supports complex business logic
+✅ Can use transactions and error handling
+
+Interview Answer:
+
+Stored Procedures improve performance, security, code reusability, and maintainability. They also reduce network traffic and allow complex business logic to be executed inside the database.
+
+-- 4. What is the difference between a Stored Procedure and a Function?
+Stored Procedure	                                         Function
+Performs a task	                                                 Returns a value
+Can return multiple result sets                         	 Returns only one value
+Can perform INSERT, UPDATE, DELETE	                         Generally cannot modify database data (in SQL functions)
+Called using CALL (MySQL) or EXEC (SQL Server)	                 Used inside SQL statements
+Supports IN, OUT, INOUT parameters	                         Usually accepts only input parameters
+
+Interview Answer:
+
+A Stored Procedure performs database operations and may return multiple result sets, while a Function returns a single value and is commonly used within SQL queries.
+
+-- 5. What is the purpose of the CALL statement?
+
+The CALL statement executes a stored procedure in MySQL.
+
+Syntax:
+
+CALL ProcedureName();
+
+Example:
+
+CALL GetEmployees();
+
+Interview Answer:
+
+The CALL statement is used in MySQL to execute a stored procedure.
+
+-- 6. What are IN, OUT, and INOUT parameters?
+IN → Passes input to the procedure.
+OUT → Returns a value from the procedure.
+INOUT → Acts as both input and output.
+
+Example:
+
+CREATE PROCEDURE ExampleProc(
+    IN EmpID INT,
+    OUT Salary DECIMAL(10,2),
+    INOUT Bonus DECIMAL(10,2)
+)
+
+Interview Answer:
+
+IN parameters receive input, OUT parameters return values, and INOUT parameters can both receive and return values.
+
+-- 7. Can a Stored Procedure return multiple result sets?
+
+Yes.
+
+Example:
+
+SELECT * FROM Employee;
+
+SELECT * FROM Department;
+
+The procedure returns two result sets.
+
+Interview Answer:
+
+Yes. A stored procedure can execute multiple SELECT statements, each producing a separate result set.
+
+-- 8. Can a Stored Procedure perform INSERT, UPDATE, and DELETE operations?
+
+Yes.
+
+Example:
+
+INSERT INTO Employee VALUES (...);
+
+UPDATE Employee
+SET Salary = 50000
+WHERE Emp_ID = 101;
+
+DELETE FROM Employee
+WHERE Emp_ID = 105;
+
+Interview Answer:
+
+Yes. Stored procedures can perform all DML operations such as INSERT, UPDATE, DELETE, and SELECT.
+
+-- 9. What is the purpose of the DELIMITER command in MySQL?
+
+DELIMITER changes the default statement terminator.
+
+Normally SQL ends with ;.
+
+Inside a procedure many semicolons exist, so MySQL needs another delimiter.
+
+Example:
+
+DELIMITER $$
+
+CREATE PROCEDURE Demo()
+BEGIN
+    SELECT * FROM Employee;
+END $$
+
+DELIMITER ;
+
+Interview Answer:
+
+DELIMITER changes the statement terminator so MySQL can correctly identify the end of a stored procedure definition.
+
+-- 10. Why are BEGIN and END used?
+
+They define the start and end of a block containing multiple SQL statements.
+
+Example:
+
+BEGIN
+    SELECT * FROM Employee;
+    SELECT * FROM Department;
+END;
+
+Interview Answer:
+
+BEGIN and END group multiple SQL statements into a single block inside a stored procedure.
+
+-- 11. How do you pass parameters to a Stored Procedure?
+
+Pass them when calling the procedure.
+
+Example:
+
+CALL GetEmployeeByDept('HR');
+
+Procedure:
+
+CREATE PROCEDURE GetEmployeeByDept(
+    IN DeptName VARCHAR(50)
+)
+BEGIN
+    SELECT *
+    FROM Employee
+    WHERE Department = DeptName;
+END;
+
+Interview Answer:
+
+Parameters are passed while calling the stored procedure using the CALL statement.
+
+-- 12. How do you return a value using an OUT parameter?
+
+Example:
+
+CREATE PROCEDURE GetEmployeeCount(
+    OUT TotalEmployees INT
+)
+BEGIN
+    SELECT COUNT(*)
+    INTO TotalEmployees
+    FROM Employee;
+END;
+
+Execute:
+
+CALL GetEmployeeCount(@Total);
+
+SELECT @Total;
+
+Interview Answer:
+
+Use an OUT parameter and assign a value to it inside the procedure. After execution, retrieve the value using a user-defined variable.
+
+-- 13. What is the difference between an IN parameter and an OUT parameter?
+IN	                                   OUT
+Passes input	                Returns output
+Read-only inside procedure	Used to return values
+Value supplied by caller	Value assigned inside procedure
+
+Interview Answer:
+
+IN parameters provide input to the procedure, whereas OUT parameters return values from the procedure to the caller.
+
+-- 14. How do you display the definition of a Stored Procedure?
+
+MySQL:
+
+SHOW CREATE PROCEDURE ProcedureName;
+
+Example:
+
+SHOW CREATE PROCEDURE GetEmployees;
+
+Interview Answer:
+
+Use SHOW CREATE PROCEDURE ProcedureName to display the stored procedure definition.
+
+-- 15. How do you delete a Stored Procedure?
+
+Syntax:
+
+DROP PROCEDURE ProcedureName;
+
+Example:
+
+DROP PROCEDURE GetEmployees;
+
+Interview Answer:
+
+Use the DROP PROCEDURE statement to permanently remove a stored procedure.
+
+-- 16. Can one Stored Procedure call another Stored Procedure?
+
+Yes.
+
+Example:
+
+CREATE PROCEDURE ProcA()
+BEGIN
+    CALL ProcB();
+END;
+
+Interview Answer:
+
+Yes. A stored procedure can call another stored procedure using the CALL statement.
+
+-- 17. Can transactions (COMMIT and ROLLBACK) be used inside a Stored Procedure?
+
+Yes.
+
+Example:
+
+START TRANSACTION;
+
+UPDATE Accounts
+SET Balance = Balance - 1000
+WHERE Acc_No = 101;
+
+UPDATE Accounts
+SET Balance = Balance + 1000
+WHERE Acc_No = 102;
+
+COMMIT;
+
+If an error occurs:
+
+ROLLBACK;
+
+Interview Answer:
+
+Yes. Stored procedures support transactions to ensure data consistency. COMMIT saves changes, while ROLLBACK undoes them if an error occurs.
+
+--18. How do Stored Procedures improve performance?
+Precompiled execution plans reduce compilation time.
+Less network traffic because only the procedure call is sent.
+Reusable execution plans improve efficiency.
+Optimized execution by the database engine.
+
+Interview Answer:
+
+Stored procedures improve performance by reusing execution plans, reducing SQL parsing and compilation, and minimizing network traffic.
+
+--19. What are the limitations of Stored Procedures?
+Harder to debug than application code.
+Database-specific syntax reduces portability.
+Large procedures can become difficult to maintain.
+Changes require database deployment.
+Complex logic may impact database server performance.
+
+Interview Answer:
+
+Stored procedures can be harder to debug, are often database-specific, and may become difficult to maintain if they contain excessive business logic.
+
+-- 20. When would you choose a Stored Procedure over writing SQL directly in an application?
+
+Choose a Stored Procedure when:
+
+The same SQL logic is reused frequently.
+Security is important.
+Complex business logic must run in the database.
+Multiple SQL statements should execute as one transaction.
+Better performance and reduced network traffic are required.
+
+Real-Time Example:
+In a banking application, a fund transfer involves:
+
+Deducting money from one account.
+Adding it to another account.
+Recording the transaction.
+Committing all changes together or rolling them back if any step fails.
+
+A stored procedure keeps all these operations together, ensuring consistency and reliability.
+
+Interview Answer:
+
+Use a stored procedure when SQL logic is reused, security is important, transactions are needed, or complex business rules should be handled within the database for better performance and maintainability.
